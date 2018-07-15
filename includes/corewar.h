@@ -13,6 +13,7 @@
 #ifndef COREWAR_H
 # define COREWAR_H
 
+# include "op.h"
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
@@ -20,16 +21,6 @@
 
 
 # include <stdio.h>
-
-# define MAX_PLAYERS		4
-# define PROG_NAME_LENGTH	(128)
-# define COMMENT_LENGTH		(2048)
-# define MEM_SIZE			(4*1024)
-# define CHAMP_MAX_SIZE		(MEM_SIZE / 6)
-
-# define REG_NUMBER			16
-# define REG_SIZE			4
-# define COREWAR_EXEC_MAGIC	0xea83f3
 
 typedef struct		s_carry
 {
@@ -76,9 +67,10 @@ typedef struct		s_vm
 }					t_vm;
 
 // int					str_compare(char *a, char *b);
-int					str_num_compare(unsigned char *s, unsigned int num);
+// int					str_num_compare(unsigned char *s, unsigned int num);
 // int					mem_compare(void *one, void *two, int n);
 void				parse_arguments(int argc, char **argv, t_vm *vm);
+void				read_cor_files(t_vm *vm);
 void				change_bot_order(int *a, t_vm *vm);
 void				exit_error(char *error_message);
 

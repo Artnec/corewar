@@ -35,41 +35,6 @@ void	show_usage(void)
 	write(1, "[-n number] before bot name\n", 28);
 }
 
-void	read_bot_files(t_vm *vm)
-{
-	int				i;
-	int				fd;
-	unsigned char	a[4];
-
-	i = -1;
-	while (++i < vm->number_of_bots)
-	{
-		if ((fd = open(vm->bot_filenames[i], O_RDONLY)) == -1)
-			exit_error("can't open file\n");
-		if (read(fd, a, 4) != 4 || str_num_compare(a, COREWAR_EXEC_MAGIC) == 0)
-			exit_error("invalid magic number\n");
-		if (read(fd, vm->bot[i].name, PROG_NAME_LENGTH) != PROG_NAME_LENGTH)
-			exit_error("not enough info in botfile\n");
-		if (read(fd, a, 4) != 4 || str_num_compare(a, 0) == 0)
-			exit_error("four zeroed bytes after bot name not found\n");
-		if (read(fd, a, 4) != 4)
-			exit_error("not enough info in botfile\n");
-		if ((vm->bot[i].size = a[3] | a[2] << 8) > CHAMP_MAX_SIZE ||
-			vm->bot[i].size == 0 || a[1] > 0 || a[0] > 0)
-			exit_error("size of the bot is invalid\n");
-		if (read(fd, vm->bot[i].comment, COMMENT_LENGTH) != COMMENT_LENGTH)
-			exit_error("not enough info in botfile\n");
-		if (read(fd, a, 4) != 4 || str_num_compare(a, 0) == 0)
-			exit_error("four zeroed bytes after bot comment not found\n");
-		if (read(fd, vm->bot[i].bot, vm->bot[i].size) != vm->bot[i].size)
-			exit_error("not enough info in botfile\n");
-		if (read(fd, a, 1) != 0)
-			exit_error("excess data at the end of the file\n");
-		if (close(fd) == -1)
-			exit_error("while closing file descriptor\n");
-	}
-}
-
 void	player_introduction(t_vm *vm)
 {
 	write(1, "Introducing contestants...\n", 27);
@@ -130,9 +95,6 @@ void	initiate_carrys_and_map(t_vm *vm)
 	int n;
 
 	vm->carry_list = NULL;
-	n = -1;
-	while (++n < 4096)
-		vm->map[n].id = 0;
 	i = -1;
 	while (++i < vm->number_of_bots)
 	{
@@ -205,16 +167,14 @@ int		main(int argc, char **argv)
 	}
 	parse_arguments(argc, argv, &vm);
 	// printf("dump: %d\nv: %d\n", vm.dump, vm.v);
-	read_bot_files(&vm);
+	read_cor_files(&vm);
 	player_introduction(&vm);
 	for (int i = 0; i < MEM_SIZE; i++)
+	{
+		vm.map[i].id = 0;
 		vm.map[i].val = 0;
+	}
 	initiate_carrys_and_map(&vm);
-	// while (vm.carry_list_head)
-	// {
-	// 	printf("%d\n", vm.carry_list_head->carry->pc);
-	// 	vm.carry_list_head = vm.carry_list_head->next;
-	// }
 	corewar(&vm);
 	// system("say  -r 170 bot 2, won");
 	return (0);

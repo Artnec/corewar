@@ -13,8 +13,8 @@
 VM				=	corewar
 ASM				=	asm
 
-VM_SRC			=	main.c	compare.c	change_bot_order.c	parse_arguments.c \
-					visualization.c
+VM_SRC			=	main.c		change_bot_order.c	parse_arguments.c \
+					visualization.c		read_cor_files.c
 
 VM_INS_SRC		=	add.c	sub.c
 
