@@ -18,7 +18,10 @@ VM_SRC			=	main.c		change_bot_order.c	parse_arguments.c \
 
 VM_INS_SRC		=	add.c	sub.c
 
-ASM_SRC			=	main.c
+ASM_SRC			=	main.c		op.c	get_labels_and_opcodes.c \
+					validate_and_translate_into_machine_code.c	error.c \
+					check_seperator_after_argument.c opcode_to_machine_code.c \
+					get_values.c	is_reg_dir_ind.c	small_functions.c \
 
 CC				=	gcc
 FLAGS			=	-Wall -Werror -Wextra
