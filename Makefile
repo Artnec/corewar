@@ -22,6 +22,8 @@ ASM_SRC			=	main.c		op.c	get_labels_and_opcodes.c \
 					validate_and_translate_into_machine_code.c	error.c \
 					check_seperator_after_argument.c opcode_to_machine_code.c \
 					get_values.c	is_reg_dir_ind.c	small_functions.c \
+					translate_all_files_in_directory.c	reverse.c \
+					write_arguments.c
 
 CC				=	gcc
 FLAGS			=	-Wall -Werror -Wextra

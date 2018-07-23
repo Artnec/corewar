@@ -12,10 +12,13 @@
 
 #include "asm.h"
 
-static void			read_s_file(int fd, t_asm *s)
+void				read_s_file(char *file_name, t_asm *s)
 {
 	int		size;
+	int		fd;
 
+	if ((fd = open(file_name, O_RDONLY)) == -1)
+		exit_error("Error: can't read source file\n");
 	if (str_len(NAME_CMD_STRING) == 0 || str_len(COMMENT_CMD_STRING) == 0)
 		exit_error("Error: empty CMD_STRING\n");
 	size = lseek(fd, 0, SEEK_END);
@@ -23,9 +26,10 @@ static void			read_s_file(int fd, t_asm *s)
 	s->file = (char *)malloc(size + 1);
 	read(fd, s->file, size);
 	s->file[size] = '\0';
+	close(fd);
 }
 
-static void			create_cor_file(char *s_file_name, t_asm *s)
+void				create_cor_file(char *s_file_name, t_asm *s)
 {
 	const char	cor[] = ".cor";
 	int			l;
@@ -56,7 +60,7 @@ static unsigned int	int32_reverse_endian(unsigned int num)
 	| ((num & 0x0000ff00) << 8) | (num << 24);
 }
 
-static void			write_into_cor_file(t_asm *s)
+void				write_into_cor_file(t_asm *s)
 {
 	const unsigned char	zero = 0;
 	const unsigned int	magic = int32_reverse_endian(COREWAR_EXEC_MAGIC);
@@ -81,24 +85,28 @@ static void			write_into_cor_file(t_asm *s)
 	i = 0;
 	while (i < s->size)
 		write(s->cor_fd, &s->code[i++], 1);
+	close(s->cor_fd);
 }
 
-int					main(int argc, char **argv)
+int					main(int ac, char **av)
 {
 	t_asm	s;
-	int		fd;
 
-	if (argc != 2)
-		exit_error("usage: ./asm filename\n");
-	if ((fd = open(argv[1], O_RDONLY)) == -1)
-		exit_error("Error: can't read source file\n");
-	s.name = NULL;
-	s.comment = NULL;
-	s.size = 0;
-	read_s_file(fd, &s);
-	validate_and_translate_into_machine_code(&s);
-	create_cor_file(argv[1], &s);
-	write_into_cor_file(&s);
-	close(fd);
+	if (ac == 2)
+	{
+		initiate_structure(&s);
+		read_s_file(av[1], &s);
+		if (validate_and_translate_into_machine_code(&s))
+			exit_error("Error: bad source file\n");
+		create_cor_file(av[1], &s);
+		write_into_cor_file(&s);
+		free_all(&s);
+	}
+	else if (ac == 3 && str_cmp(av[1], "-d"))
+		translate_all_files_in_directory(av[2], &s);
+	else if (ac == 3 && str_cmp(av[1], "-r"))
+		reverse(av[2]);
+	else
+		write(1, "usage: ./asm file | -d dir_name | -r file.cor\n", 46);
 	return (0);
 }

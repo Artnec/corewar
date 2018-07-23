@@ -46,8 +46,8 @@ static t_list	*get_label(char *file, int *i, int cur_size, t_list *head)
 		*i += 1;
 		n++;
 	}
-	if (file[*i] != LABEL_CHAR)
-		exit_lexical_error(file, *i);
+	if (file[*i] != LABEL_CHAR || (n == 0 && (file[*i] = '.')))
+		exit_lexical_error(file, *i - n);
 	label = (t_list *)malloc(sizeof(t_list));
 	label->next = head;
 	label->str = (char *)malloc(n + 1);

@@ -17,6 +17,10 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <dirent.h>
+# include <sys/types.h>
+
+// # include <stdio.h>
 
 #define COMMENT					';'
 #define CORE_CHAMP_MAX_SIZE		2048
@@ -46,6 +50,16 @@ typedef struct		s_asm
 }					t_asm;
 
 
+typedef struct		s_rev
+{
+	unsigned char	*buf;
+	char			name[PROG_NAME_LENGTH];
+	char			comment[COMMENT_LENGTH];
+	unsigned char	code[CORE_CHAMP_MAX_SIZE];
+	unsigned int	size;
+}					t_rev;
+
+
 typedef struct		s_op
 {
 	char			*name;
@@ -63,10 +77,20 @@ typedef struct		s_op
 */
 extern t_op			g_op_tab[17];
 
+
+/*
+**					main.c
+*/
+void				read_s_file(char *file_name, t_asm *s);
+void				create_cor_file(char *s_file_name, t_asm *s);
+void				write_into_cor_file(t_asm *s);
+
+
 /*
 **					validate_and_translate_into_machine_code.c
 */
-void				validate_and_translate_into_machine_code(t_asm *s);
+int					validate_and_translate_into_machine_code(t_asm *s);
+int					str_cmp(char *a, char *b);
 
 
 /*
@@ -110,6 +134,26 @@ void				exit_error(char *error_message);
 int					is_label_char(char c);
 int					unsigned_int_to_code(unsigned int num, int n, t_asm *s);
 int					unsigned_short_to_code(unsigned short num, int n, t_asm *s);
+
+
+/*
+**					translate_all_files_in_directory.c
+*/
+void				initiate_structure(t_asm *s);
+void				free_all(t_asm *s);
+void				translate_all_files_in_directory(char *dir_name, t_asm *s);
+
+
+/*
+**					reverse.c
+*/
+void				reverse(char *file);
+
+
+/*
+**					write_arguments.c
+*/
+int 				write_arguments(int fd, int i, t_rev *rev);
 
 
 /*

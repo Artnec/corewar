@@ -38,10 +38,23 @@ static int		get_error_line(char *file, int i)
 void			*exit_lexical_error(char *file, int n)
 {
 	int j;
+	int i;
 
-	write(2, "error at line:", 14);
+	write(2, "Error at line: ", 15);
 	err_put_nbr(get_error_line(file, n));
-	write(2, " column:", 8);
+	write(2, " column: ", 9);
+	i = n;
+	while (file[i] && file[++i] != '\n')
+	{
+		if (file[i] == ' ' || file[i] == '\t')
+		{
+			while (file[i] == ' ' || file[i] == '\t')
+				i++;
+			file[i] = COMMENT_CHAR;
+			if (is_t_reg(file, n) || is_t_dir(file, n) || is_t_ind(file, n))
+				n = i;
+		}
+	}
 	j = 1;
 	while (--n >= 0 && file[n] != '\n')
 		j++;
@@ -63,6 +76,8 @@ static void		print_err_opcode(int i, char *file)
 		}
 		i--;
 	}
+	while (file[i] == ' ' || file[i] == '\t')
+		i++;
 	while (file[i] != ' ' && file[i] != '\t' && file[i] != DIRECT_CHAR)
 		write(2, &file[i++], 1);
 }

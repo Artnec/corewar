@@ -12,7 +12,7 @@
 
 #include "asm.h"
 
-static int		str_cmp(char *a, char *b)
+int				str_cmp(char *a, char *b)
 {
 	while (*a && *b && *a == *b)
 	{
@@ -55,7 +55,10 @@ static void		get_code(int i, t_asm *s)
 	t_list	*labels_head;
 	t_list	*op_labels;
 
-	s->op_labels = NULL;
+	if (str_len(s->name) > PROG_NAME_LENGTH)
+		exit_error("Error: champion name is too long\n");
+	if (str_len(s->comment) > COMMENT_LENGTH)
+		exit_error("Error: champion comment is too long\n");
 	labels_head = get_labels_and_opcodes(i, s);
 	op_labels = s->op_labels;
 	while (op_labels)
@@ -65,6 +68,13 @@ static void		get_code(int i, t_asm *s)
 	}
 	if (s->size == 0)
 		exit_error("Error: can't create empty champion\n");
+	while (labels_head)
+	{
+		op_labels = labels_head;
+		labels_head = labels_head->next;
+		free(op_labels->str);
+		free(op_labels);
+	}
 }
 
 static char		*get_name_comment(char *file, int *i, char *name_comment)
@@ -94,7 +104,7 @@ static char		*get_name_comment(char *file, int *i, char *name_comment)
 	return (str);
 }
 
-void			validate_and_translate_into_machine_code(t_asm *s)
+int				validate_and_translate_into_machine_code(t_asm *s)
 {
 	int i;
 
@@ -117,7 +127,8 @@ void			validate_and_translate_into_machine_code(t_asm *s)
 		if (s->name && s->comment)
 		{
 			get_code(i, s);
-			return ;
+			return (0);
 		}
 	}
+	return (1);
 }
