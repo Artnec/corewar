@@ -100,8 +100,9 @@ void	initiate_carrys_and_map(t_vm *vm)
 	{
 		vm->carry_list = add_list_head(vm->carry_list);
 		vm->carry_list->carry->pc = MEM_SIZE / vm->number_of_bots * i;
-		vm->carry_list->carry->cycle = 0;
+		vm->carry_list->carry->cycles = -1;
 		vm->carry_list->carry->alive = 1;
+		vm->carry_list->carry->id = i + 1;
 		for (int j = 0; j < 16; ++j)
 			vm->carry_list->carry->registry[j] = 0;
 		n = -1;
@@ -120,17 +121,31 @@ void	run_cycle(t_vm *vm)
 	t_list	*list;
 
 	list = vm->carry_list_head;
-	// vm->function[0](vm);
-	// vm->function[1](vm);
 	if (vm->v == 1)
 		draw_ncurses(vm);
 	while (list)
 	{
-		// if (list->)
 		// printf("%d\n", list->carry->pc);
+		if (list->carry->cycles == -1)
+		{
+			if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 16)
+				list->carry->cycles = g_op_tab[vm->map[list->carry->pc].val - 1].cycles;
+			else
+				list->carry->cycles = 0;
+		}
+		if (list->carry->cycles == 0)
+		{
+			// if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 16)
+			if (vm->map[list->carry->pc].val == 2 || vm->map[list->carry->pc].val == 11 ||
+				vm->map[list->carry->pc].val == 4 || vm->map[list->carry->pc].val == 5)
+				vm->functions[vm->map[list->carry->pc].val - 1](list->carry, vm);
+			else
+				list->carry->pc++;
+		}
+		// printf("%d %d\n", list->carry->cycles, vm->cycle);
+		list->carry->cycles -= 1;
 		list = list->next;
 	}
-	vm->end = 1;
 	vm->cycle += 1;
 }
 
@@ -138,8 +153,7 @@ void	corewar(t_vm *vm)
 {
 	if (vm->v == 1)
 		start_ncurses();
-	vm->end = 0;
-	while (vm->end == 0)
+	while (vm->cycle < 1000)
 	{
 		if (vm->dump == vm->cycle)
 		{
@@ -156,8 +170,10 @@ int		main(int argc, char **argv)
 {
 	t_vm	vm;
 
-	vm.function[0] = add;
-	vm.function[1] = sub;
+	vm.functions[3] = add;
+	vm.functions[4] = sub;
+	vm.functions[1] = ld;
+	vm.functions[10] = sti;
 	vm.v = 0;
 	vm.dump = -1;
 	if (argc < 2)

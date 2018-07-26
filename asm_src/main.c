@@ -49,7 +49,7 @@ void				create_cor_file(char *s_file_name, t_asm *s)
 	while (cor[l])
 		s->cor_file_name[n++] = cor[l++];
 	s->cor_file_name[n] = '\0';
-	s->cor_fd = open(s->cor_file_name, O_CREAT | O_EXCL | O_WRONLY, 0600);
+	s->cor_fd = open(s->cor_file_name, O_CREAT | O_WRONLY, 0600); // O_EXCL
 	if (s->cor_fd == -1)
 		exit_error("Error: can't create file\n");
 }

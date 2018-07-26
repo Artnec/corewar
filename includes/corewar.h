@@ -26,8 +26,9 @@ typedef struct		s_carry
 {
 	unsigned int	registry[REG_NUMBER];
 	int				pc;
+	int				id;
 	int				carry;
-	int				cycle;
+	int				cycles;
 	int				alive;
 }					t_carry;
 
@@ -61,10 +62,26 @@ typedef struct		s_vm
 	char			*bot_filenames[4];
 	t_bot			bot[MAX_PLAYERS];
 	t_map			map[MEM_SIZE];
-	int				(*function[16])(struct s_vm *);
+	int				(*functions[16])(t_carry *carry, struct s_vm *);
 	int				cycle;
-	int				end;
 }					t_vm;
+
+typedef struct		s_op
+{
+	char			*name;
+	int				args_num;
+	int				args[3];
+	int				opcode;
+	int				cycles;
+	char			*opcode_description;
+	int				codage;
+	int				label_size;
+}					t_op;
+
+/*
+**					op.c
+*/
+extern t_op			g_op_tab[17];
 
 // int					str_compare(char *a, char *b);
 // int					str_num_compare(unsigned char *s, unsigned int num);
@@ -79,7 +96,15 @@ void				draw_ncurses(t_vm *vm);
 void				start_ncurses(void);
 
 
-int					add(t_vm *vm);
-int					sub(t_vm *vm);
+unsigned int		get_uint(t_map *map);
+unsigned short		get_usrt(t_map *map);
+void				uint_to_map(unsigned int n, int id, t_map *map);
+unsigned int		get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm);
+
+
+int					add(t_carry *carry, t_vm *vm);
+int					sub(t_carry *carry, t_vm *vm);
+int					ld(t_carry *carry, t_vm *vm);
+int					sti(t_carry *carry, t_vm *vm);
 
 #endif
