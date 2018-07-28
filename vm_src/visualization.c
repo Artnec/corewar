@@ -80,12 +80,12 @@ void			draw_ncurses(t_vm *vm)
 		i = 3;
 		while (i < 195)
 		{
-			if (vm->map[j].bold > 0)
-				wattron(stdscr, A_BOLD);
+			// if (vm->map[j].bold > 0)
+			// 	wattron(stdscr, A_BOLD);
 			wattron(stdscr, COLOR_PAIR(vm->map[j].id));
 			mvwprintw(stdscr, n, i, "%02x", vm->map[j].val);
-			if (vm->map[j].bold > 0 && vm->map[j].bold--)
-				wattroff(stdscr, A_BOLD);
+			// if (vm->map[j].bold > 0 && vm->map[j].bold--)
+			// 	wattroff(stdscr, A_BOLD);
 			wattroff(stdscr, COLOR_PAIR(vm->map[j++].id));
 			i += 3;
 		}
@@ -95,7 +95,7 @@ void			draw_ncurses(t_vm *vm)
 	wrefresh(stdscr);
 	if (vm->cycle == 0)
 		pause_ncurses();
-	usleep(50000);
+	usleep(20000);
 }
 
 static void		draw_border(void)

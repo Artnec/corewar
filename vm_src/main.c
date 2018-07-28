@@ -105,7 +105,7 @@ void	initiate_carrys_and_map(t_vm *vm)
 		carry_list->carry->alive = 1;
 		carry_list->carry->id = i + 1;
 		carry_list->carry->registry[0] = -(i + 1);
-		for (int j = 1; j < 16; ++j)
+		for (int j = 1; j < REG_NUMBER; ++j)
 			carry_list->carry->registry[j] = 0;
 		n = -1;
 		while (++n < vm->bot[i].size)
@@ -157,31 +157,41 @@ void	run_cycle(t_vm *vm)
 	list = vm->carry_list_head;
 	if (vm->v == 1)
 		draw_ncurses(vm);
+	int j = 0;
 	while (list)
 	{
-		// printf("%d\n", list->carry->pc);
+		// printf("%d %d\n", list->carry->pc, vm->map[list->carry->pc].val);
+		// write(1, "ccc\n", 4);
+		// printf("j %d\n", j);
+		// if (list->carry == NULL)
+			// write(1, "nul\n", 4);
+		// write(1, "nnn\n", 4);
 		if (list->carry->cycles == -1)
 		{
 			// printf("codage %d\n", check_codage(vm->map, list->carry->pc));
-			if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 16)
+			if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 17)
 				list->carry->cycles = g_op_tab[vm->map[list->carry->pc].val - 1].cycles;
 			else
 				list->carry->cycles = 0;
 		}
 		if (list->carry->cycles == 0)
 		{
+			// printf("op %d\n", vm->map[list->carry->pc].val);
 			// if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 16)
 			if (vm->map[list->carry->pc].val == 2 || vm->map[list->carry->pc].val == 11 ||
 				vm->map[list->carry->pc].val == 4 || vm->map[list->carry->pc].val == 5 ||
 				vm->map[list->carry->pc].val == 13 || vm->map[list->carry->pc].val == 6)
 				vm->functions[vm->map[list->carry->pc].val - 1](list->carry, vm);
 			else
-				list->carry->pc++;
+				iterate(&list->carry->pc, 1);
 		}
 		// printf("%d %d\n", list->carry->cycles, vm->cycle);
 		list->carry->cycles -= 1;
 		list = list->next;
+		// write(1, "aaa\n", 4);
+		j++;
 	}
+	// write(1, "bbb\n", 4);
 	vm->cycle += 1;
 }
 
@@ -189,7 +199,7 @@ void	corewar(t_vm *vm)
 {
 	if (vm->v == 1)
 		start_ncurses();
-	while (vm->cycle < 1000)
+	while (vm->cycle < 2000)
 	{
 		if (vm->dump == vm->cycle)
 		{

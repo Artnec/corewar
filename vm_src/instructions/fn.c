@@ -1,6 +1,6 @@
 #include "corewar.h"
 
-#define ITE(x, y)	(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
+// #define ITE(x, y)	(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
 
 int			iterate(int *pc, int n)
 {
@@ -43,7 +43,7 @@ int				get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm)
 	{
 		// printf("T_REG\n");
 		num = carry->registry[vm->map[carry->p].val - 1];
-		printf("reg: %d\n", num);
+		// printf("reg: %d\n", num);
 		iterate(&carry->p, 1);
 		return (num);
 	}
@@ -51,7 +51,7 @@ int				get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm)
 	{
 		// printf("T_DIR\n");
 		num = d == 2 ? get_usrt(vm->map, carry->p) : get_uint(vm->map, carry->p);
-		printf("dir: %d\n", num);
+		// printf("dir: %d\n", num);
 		iterate(&carry->p, d);
 		return (num);
 	}
@@ -59,7 +59,7 @@ int				get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm)
 	{
 		// printf("T_IND\n");
 		num = get_uint(vm->map, carry->pc + get_usrt(vm->map, carry->p) % IDX_MOD);
-		printf("ind: %d\n", num);
+		// printf("ind: %d\n", num);
 		iterate(&carry->p, 2);
 		return (num);
 	}

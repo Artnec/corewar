@@ -23,6 +23,7 @@ int		ld(t_carry *carry, t_vm *vm)
 	{
 		iterate(&carry->p, 1);
 		n = (carry->pc + get_usrt(vm->map, carry->p) % IDX_MOD) % MEM_SIZE;
+		// printf("%d %d\n", get_usrt(vm->map, carry->p), carry->pc);
 		iterate(&carry->p, 2);
 		carry->registry[vm->map[carry->p].val - 1] = get_uint(vm->map, n);
 		carry->carry = carry->registry[vm->map[carry->p].val - 1] == 0 ? 1 : 0;
