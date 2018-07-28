@@ -24,8 +24,9 @@
 
 typedef struct		s_carry
 {
-	unsigned int	registry[REG_NUMBER];
+	int				registry[REG_NUMBER];
 	int				pc;
+	int				p;
 	int				id;
 	int				carry;
 	int				cycles;
@@ -42,6 +43,7 @@ typedef struct		s_map
 {
 	unsigned char	val;
 	int				id;
+	int				bold;
 }					t_map;
 
 typedef struct		s_bot
@@ -54,7 +56,6 @@ typedef struct		s_bot
 
 typedef struct		s_vm
 {
-	t_list			*carry_list;
 	t_list			*carry_list_head;
 	int				v;
 	int				dump;
@@ -64,6 +65,7 @@ typedef struct		s_vm
 	t_map			map[MEM_SIZE];
 	int				(*functions[16])(t_carry *carry, struct s_vm *);
 	int				cycle;
+	int				cycle_to_die;
 }					t_vm;
 
 typedef struct		s_op
@@ -96,15 +98,19 @@ void				draw_ncurses(t_vm *vm);
 void				start_ncurses(void);
 
 
-unsigned int		get_uint(t_map *map);
-unsigned short		get_usrt(t_map *map);
-void				uint_to_map(unsigned int n, int id, t_map *map);
-unsigned int		get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm);
+unsigned int		get_uint(t_map *map, int n);
+unsigned short		get_usrt(t_map *map, int n);
+void				uint_to_map(unsigned int n, int id, t_map *map, int i);
+int					get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm);
+int					iterate(int *pc, int n);
 
 
+int					live(t_carry *carry, t_vm *vm);
 int					add(t_carry *carry, t_vm *vm);
 int					sub(t_carry *carry, t_vm *vm);
+int					and(t_carry *carry, t_vm *vm);
 int					ld(t_carry *carry, t_vm *vm);
 int					sti(t_carry *carry, t_vm *vm);
+int					lld(t_carry *carry, t_vm *vm);
 
 #endif

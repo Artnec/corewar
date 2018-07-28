@@ -16,7 +16,7 @@ ASM				=	asm
 VM_SRC			=	main.c		change_bot_order.c	parse_arguments.c \
 					visualization.c		read_cor_files.c	op.c
 
-VM_INS_SRC		=	add.c	sub.c ld.c sti.c
+VM_INS_SRC		=	fn.c	live.c	add.c	sub.c and.c ld.c	sti.c	lld.c
 
 ASM_SRC			=	main.c		op.c	get_labels_and_opcodes.c \
 					validate_and_translate_into_machine_code.c	error.c \

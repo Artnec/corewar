@@ -93,27 +93,61 @@ void	initiate_carrys_and_map(t_vm *vm)
 {
 	int i;
 	int n;
+	t_list *carry_list;
 
-	vm->carry_list = NULL;
+	carry_list = NULL;
 	i = -1;
 	while (++i < vm->number_of_bots)
 	{
-		vm->carry_list = add_list_head(vm->carry_list);
-		vm->carry_list->carry->pc = MEM_SIZE / vm->number_of_bots * i;
-		vm->carry_list->carry->cycles = -1;
-		vm->carry_list->carry->alive = 1;
-		vm->carry_list->carry->id = i + 1;
-		for (int j = 0; j < 16; ++j)
-			vm->carry_list->carry->registry[j] = 0;
+		carry_list = add_list_head(carry_list);
+		carry_list->carry->pc = MEM_SIZE / vm->number_of_bots * i;
+		carry_list->carry->cycles = -1;
+		carry_list->carry->alive = 1;
+		carry_list->carry->id = i + 1;
+		carry_list->carry->registry[0] = -(i + 1);
+		for (int j = 1; j < 16; ++j)
+			carry_list->carry->registry[j] = 0;
 		n = -1;
 		while (++n < vm->bot[i].size)
 		{
-			vm->map[vm->carry_list->carry->pc + n].val = vm->bot[i].bot[n];
-			vm->map[vm->carry_list->carry->pc + n].id = i + 1;
+			vm->map[carry_list->carry->pc + n].val = vm->bot[i].bot[n];
+			vm->map[carry_list->carry->pc + n].id = i + 1;
 		}
 	}
-	vm->carry_list_head = vm->carry_list;
+	vm->carry_list_head = carry_list;
 	vm->cycle = 0;
+}
+
+int		cmp_codage(int args, int codage)
+{
+	if (codage == REG_CODE && (args & T_REG))
+		return (1);
+	if (codage == DIR_CODE && (args & T_DIR))
+		return (1);
+	if (codage == IND_CODE && (args & T_IND))
+		return (1);
+	return (0);
+}
+
+int		check_codage(t_map *map, int pc)
+{
+	int i;
+	int c;
+	int opcode;
+	int codage;
+
+	opcode = map[pc].val - 1;
+	codage = map[pc + 1].val; // MEM_SIZE ?
+	if (g_op_tab[opcode].codage == 0)
+		return (1);
+	i = 0;
+	while (++i <= g_op_tab[opcode].args_num)
+	{
+		c = (codage >> (8 - i * 2)) & 3;
+		if (cmp_codage(g_op_tab[opcode].args[i - 1], c) == 0)
+			return (0);
+	}
+	return ((codage & 3) == 0);
 }
 
 void	run_cycle(t_vm *vm)
@@ -128,6 +162,7 @@ void	run_cycle(t_vm *vm)
 		// printf("%d\n", list->carry->pc);
 		if (list->carry->cycles == -1)
 		{
+			// printf("codage %d\n", check_codage(vm->map, list->carry->pc));
 			if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 16)
 				list->carry->cycles = g_op_tab[vm->map[list->carry->pc].val - 1].cycles;
 			else
@@ -137,7 +172,8 @@ void	run_cycle(t_vm *vm)
 		{
 			// if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 16)
 			if (vm->map[list->carry->pc].val == 2 || vm->map[list->carry->pc].val == 11 ||
-				vm->map[list->carry->pc].val == 4 || vm->map[list->carry->pc].val == 5)
+				vm->map[list->carry->pc].val == 4 || vm->map[list->carry->pc].val == 5 ||
+				vm->map[list->carry->pc].val == 13 || vm->map[list->carry->pc].val == 6)
 				vm->functions[vm->map[list->carry->pc].val - 1](list->carry, vm);
 			else
 				list->carry->pc++;
@@ -158,24 +194,50 @@ void	corewar(t_vm *vm)
 		if (vm->dump == vm->cycle)
 		{
 			dump_memory(vm);
-			return ; 			/* mb flag to continue */
+			return ;
 		}
+		// if (vm->cycle == vm->cycle_to_die)
+		// 	;
 		run_cycle(vm);
 	}
 	if (vm->v == 1)
 		endwin();
 }
 
+void	initiate_structure(t_vm *vm)
+{
+	vm->functions[0] = live;
+	vm->functions[1] = ld;
+	// vm->functions[2] = ;
+	vm->functions[3] = add;
+	vm->functions[4] = sub;
+	vm->functions[5] = and;
+	// vm->functions[6] = ;
+	// vm->functions[7] = ;
+	// vm->functions[8] = ;
+	// vm->functions[9] = ;
+	vm->functions[10] = sti;
+	// vm->functions[11] = ;
+	vm->functions[12] = lld;
+	// vm->functions[13] = ;
+	// vm->functions[14] = ;
+	// vm->functions[15] = ;
+	vm->v = 0;
+	vm->dump = -1;
+	vm->cycle_to_die = CYCLE_TO_DIE;
+	for (int i = 0; i < MEM_SIZE; i++)
+	{
+		vm->map[i].id = 0;
+		vm->map[i].val = 0;
+		vm->map[i].bold = 0;
+	}
+}
+
 int		main(int argc, char **argv)
 {
 	t_vm	vm;
 
-	vm.functions[3] = add;
-	vm.functions[4] = sub;
-	vm.functions[1] = ld;
-	vm.functions[10] = sti;
-	vm.v = 0;
-	vm.dump = -1;
+	initiate_structure(&vm);
 	if (argc < 2)
 	{
 		show_usage();
@@ -185,11 +247,6 @@ int		main(int argc, char **argv)
 	// printf("dump: %d\nv: %d\n", vm.dump, vm.v);
 	read_cor_files(&vm);
 	player_introduction(&vm);
-	for (int i = 0; i < MEM_SIZE; i++)
-	{
-		vm.map[i].id = 0;
-		vm.map[i].val = 0;
-	}
 	initiate_carrys_and_map(&vm);
 	corewar(&vm);
 	// system("say  -r 170 bot 2, won");
