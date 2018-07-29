@@ -21,11 +21,11 @@ static void		draw_carrys(t_vm *vm)
 	tmp = vm->carry_list_head;
 	while (tmp)
 	{
-		wattron(stdscr, COLOR_PAIR(vm->map[tmp->carry->pc].id + 5));
-		i = tmp->carry->pc / 64 + 2;
-		j = tmp->carry->pc % 64 * 3 + 3;
-		mvwprintw(stdscr, i, j, "%02x", vm->map[tmp->carry->pc].val);
-		wattroff(stdscr, COLOR_PAIR(vm->map[tmp->carry->pc].id + 5));
+		wattron(stdscr, COLOR_PAIR(vm->map[tmp->pc].id + 5));
+		i = tmp->pc / 64 + 2;
+		j = tmp->pc % 64 * 3 + 3;
+		mvwprintw(stdscr, i, j, "%02x", vm->map[tmp->pc].val);
+		wattroff(stdscr, COLOR_PAIR(vm->map[tmp->pc].id + 5));
 		tmp = tmp->next;
 	}
 }
@@ -48,12 +48,12 @@ void			draw_info(t_vm *vm)
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 4, 199, "Cycles/second limit : 50");
 	mvwprintw(stdscr, 7, 199, "Cycle : %d", vm->cycle);
-	mvwprintw(stdscr, 9, 199, "Processes : %d", vm->number_of_bots);
+	mvwprintw(stdscr, 9, 199, "Processes : %d", vm->processes);
 	for (n = 0; n < vm->number_of_bots; ++n)
 	{
 		mvwprintw(stdscr, 11 + n * 4, 199, "Player %d :", -(n + 1));
 		wattron(stdscr, COLOR_PAIR(n + 1));
-		mvwprintw(stdscr, 11 + n * 4, 211, "%s", vm->bot[n].name);
+		mvwprintw(stdscr, 11 + n * 4, 211, "%.41s", vm->bot[n].name);
 		wattroff(stdscr, COLOR_PAIR(n + 1));
 		mvwprintw(stdscr, 12 + n * 4, 201, "Last live : %21d", 0);
 		mvwprintw(stdscr, 13 + n * 4, 201, "Lives in current period : %7d", 0);
@@ -80,12 +80,12 @@ void			draw_ncurses(t_vm *vm)
 		i = 3;
 		while (i < 195)
 		{
-			// if (vm->map[j].bold > 0)
-			// 	wattron(stdscr, A_BOLD);
+			if (vm->map[j].bold > 0)
+				wattron(stdscr, A_BOLD);
 			wattron(stdscr, COLOR_PAIR(vm->map[j].id));
 			mvwprintw(stdscr, n, i, "%02x", vm->map[j].val);
-			// if (vm->map[j].bold > 0 && vm->map[j].bold--)
-			// 	wattroff(stdscr, A_BOLD);
+			if (vm->map[j].bold > 0 && vm->map[j].bold--)
+				wattroff(stdscr, A_BOLD);
 			wattroff(stdscr, COLOR_PAIR(vm->map[j++].id));
 			i += 3;
 		}

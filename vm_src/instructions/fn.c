@@ -35,7 +35,7 @@ unsigned short	get_usrt(t_map *map, int n)
 }
 
 
-int				get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm)
+int				get_rdi_val(t_list *carry, int t_rdi, int d, t_vm *vm)
 {
 	int num;
 	// printf("j: %d\n", t_rdi);
@@ -50,7 +50,7 @@ int				get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm)
 	if (t_rdi == DIR_CODE)
 	{
 		// printf("T_DIR\n");
-		num = d == 2 ? get_usrt(vm->map, carry->p) : get_uint(vm->map, carry->p);
+		num = d == 2 ? (short)get_usrt(vm->map, carry->p) : get_uint(vm->map, carry->p);
 		// printf("dir: %d\n", num);
 		iterate(&carry->p, d);
 		return (num);
@@ -86,3 +86,24 @@ void			uint_to_map(unsigned int n, int id, t_map *map, int i)
 	map[(i + 3) % MEM_SIZE].id = id;
 	map[(i + 3) % MEM_SIZE].bold = 50;
 }
+
+
+void	fork_carry(t_list *orig_carry, t_vm *vm, int pos)
+{
+	t_list	*carry;
+	int		n;
+
+	carry = (t_list *)malloc(sizeof(t_list));
+	carry->next = vm->carry_list_head;
+	vm->carry_list_head = carry;
+	carry->pc = orig_carry->pc;
+	iterate(&carry->pc, pos);
+	carry->cycles = -1;
+	carry->carry = orig_carry->carry;
+	carry->alive = orig_carry->alive;
+	carry->id = orig_carry->id;
+	n = -1;
+	while (++n < REG_NUMBER)
+		carry->registry[n] = orig_carry->registry[n];
+}
+

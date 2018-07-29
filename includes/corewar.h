@@ -22,7 +22,11 @@
 
 # include <stdio.h>
 
-typedef struct		s_carry
+# define RC(x)		(x < 1 || x > REG_NUMBER)
+# define ITE(x, y)	(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
+
+
+typedef struct		s_list
 {
 	int				registry[REG_NUMBER];
 	int				pc;
@@ -31,11 +35,6 @@ typedef struct		s_carry
 	int				carry;
 	int				cycles;
 	int				alive;
-}					t_carry;
-
-typedef struct		s_list
-{
-	t_carry			*carry;
 	struct s_list	*next;
 }					t_list;
 
@@ -58,14 +57,16 @@ typedef struct		s_vm
 {
 	t_list			*carry_list_head;
 	int				v;
+	int				a;
 	int				dump;
 	int				number_of_bots;
 	char			*bot_filenames[4];
 	t_bot			bot[MAX_PLAYERS];
 	t_map			map[MEM_SIZE];
-	int				(*functions[16])(t_carry *carry, struct s_vm *);
+	int				(*functions[16])(t_list *carry, struct s_vm *);
 	int				cycle;
 	int				cycle_to_die;
+	int				processes;
 }					t_vm;
 
 typedef struct		s_op
@@ -85,9 +86,6 @@ typedef struct		s_op
 */
 extern t_op			g_op_tab[17];
 
-// int					str_compare(char *a, char *b);
-// int					str_num_compare(unsigned char *s, unsigned int num);
-// int					mem_compare(void *one, void *two, int n);
 void				parse_arguments(int argc, char **argv, t_vm *vm);
 void				read_cor_files(t_vm *vm);
 void				change_bot_order(int *a, t_vm *vm);
@@ -101,16 +99,30 @@ void				start_ncurses(void);
 unsigned int		get_uint(t_map *map, int n);
 unsigned short		get_usrt(t_map *map, int n);
 void				uint_to_map(unsigned int n, int id, t_map *map, int i);
-int					get_rdi_val(t_carry *carry, int t_rdi, int d, t_vm *vm);
+int					get_rdi_val(t_list *carry, int t_rdi, int d, t_vm *vm);
 int					iterate(int *pc, int n);
+void				fork_carry(t_list *orig_carry, t_vm *vm, int pos);
 
 
-int					live(t_carry *carry, t_vm *vm);
-int					add(t_carry *carry, t_vm *vm);
-int					sub(t_carry *carry, t_vm *vm);
-int					and(t_carry *carry, t_vm *vm);
-int					ld(t_carry *carry, t_vm *vm);
-int					sti(t_carry *carry, t_vm *vm);
-int					lld(t_carry *carry, t_vm *vm);
+
+/*
+**					vm_src/instructions
+*/
+int					live(t_list *carry, t_vm *vm);
+int					ld(t_list *carry, t_vm *vm);
+int					st(t_list *carry, t_vm *vm);
+int					add(t_list *carry, t_vm *vm);
+int					sub(t_list *carry, t_vm *vm);
+int					and(t_list *carry, t_vm *vm);
+int					or(t_list *carry, t_vm *vm);
+int					xor(t_list *carry, t_vm *vm);
+int					zjmp(t_list *carry, t_vm *vm);
+int					ldi(t_list *carry, t_vm *vm);
+int					sti(t_list *carry, t_vm *vm);
+int					fork_op(t_list *carry, t_vm *vm);
+int					lld(t_list *carry, t_vm *vm);
+int					lldi(t_list *carry, t_vm *vm);
+int					lfork(t_list *carry, t_vm *vm);
+int					aff(t_list *carry, t_vm *vm);
 
 #endif

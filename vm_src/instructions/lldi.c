@@ -1,34 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sub.c                                              :+:      :+:    :+:   */
+/*   lldi.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anesteru <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/05/31 21:58:42 by anesteru          #+#    #+#             */
-/*   Updated: 2018/05/31 21:58:44 by anesteru         ###   ########.fr       */
+/*   Created: 2018/07/29 15:28:17 by anesteru          #+#    #+#             */
+/*   Updated: 2018/07/29 15:28:18 by anesteru         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "corewar.h"
 
-int		sub(t_list *carry, t_vm *vm)
+int		lldi(t_list *carry, t_vm *vm)
 {
-	int r1;
-	int r2;
+	int j;
+	int n;
 
 	carry->p = carry->pc;
-	r1 = iterate(&carry->p, 2);
-	r2 = iterate(&carry->p, 1);
 	iterate(&carry->p, 1);
-	if (RC(vm->map[r1].val) || RC(vm->map[r2].val) || RC(vm->map[carry->p].val))
+	j = vm->map[carry->p].val >> 4;
+	iterate(&carry->p, 1);
+	n = ((int)get_rdi_val(carry, j >> 2, 2, vm) + (int)get_rdi_val(carry, j & 3, 2, vm));
+	if (vm->map[carry->pc].val < 1 || vm->map[carry->pc].val > REG_NUMBER)
 	{
-		carry->pc = iterate(&carry->p, 1);
+		iterate(&carry->pc, 1);
 		return (0);
 	}
-	carry->registry[vm->map[carry->p].val - 1] =
-	carry->registry[vm->map[r1].val - 1] - carry->registry[vm->map[r2].val - 1];
-	carry->carry = carry->registry[vm->map[carry->p].val - 1] == 0 ? 1 : 0;
+	iterate(&carry->pc, n);
+	n = get_uint(vm->map, carry->pc);
+	carry->registry[vm->map[carry->p].val - 1] = n;
+	carry->carry = (n == 0 ? 1 : 0);
 	carry->pc = iterate(&carry->p, 1);
 	return (0);
 }

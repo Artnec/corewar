@@ -1,34 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sub.c                                              :+:      :+:    :+:   */
+/*   lfork.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anesteru <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/05/31 21:58:42 by anesteru          #+#    #+#             */
-/*   Updated: 2018/05/31 21:58:44 by anesteru         ###   ########.fr       */
+/*   Created: 2018/07/29 14:55:42 by anesteru          #+#    #+#             */
+/*   Updated: 2018/07/29 14:55:44 by anesteru         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "corewar.h"
 
-int		sub(t_list *carry, t_vm *vm)
+int		lfork(t_list *carry, t_vm *vm)
 {
-	int r1;
-	int r2;
-
 	carry->p = carry->pc;
-	r1 = iterate(&carry->p, 2);
-	r2 = iterate(&carry->p, 1);
 	iterate(&carry->p, 1);
-	if (RC(vm->map[r1].val) || RC(vm->map[r2].val) || RC(vm->map[carry->p].val))
-	{
-		carry->pc = iterate(&carry->p, 1);
-		return (0);
-	}
-	carry->registry[vm->map[carry->p].val - 1] =
-	carry->registry[vm->map[r1].val - 1] - carry->registry[vm->map[r2].val - 1];
-	carry->carry = carry->registry[vm->map[carry->p].val - 1] == 0 ? 1 : 0;
-	carry->pc = iterate(&carry->p, 1);
+	fork_carry(carry, vm, (short)get_usrt(vm->map, carry->p));
+	iterate(&carry->pc, 3);
+	vm->processes++;
 	return (0);
 }
+

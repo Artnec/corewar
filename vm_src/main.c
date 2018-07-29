@@ -80,11 +80,8 @@ void	dump_memory(t_vm *vm)
 t_list	*add_list_head(t_list *list_head)
 {
 	t_list	*list;
-	t_carry *carry;
 
-	carry = (t_carry *)malloc(sizeof(t_carry));
 	list = (t_list *)malloc(sizeof(t_list));
-	list->carry = carry;
 	list->next = list_head;
 	return (list);
 }
@@ -93,105 +90,54 @@ void	initiate_carrys_and_map(t_vm *vm)
 {
 	int i;
 	int n;
-	t_list *carry_list;
 
-	carry_list = NULL;
+	vm->carry_list_head = NULL;
 	i = -1;
+	vm->processes = vm->number_of_bots;
 	while (++i < vm->number_of_bots)
 	{
-		carry_list = add_list_head(carry_list);
-		carry_list->carry->pc = MEM_SIZE / vm->number_of_bots * i;
-		carry_list->carry->cycles = -1;
-		carry_list->carry->alive = 1;
-		carry_list->carry->id = i + 1;
-		carry_list->carry->registry[0] = -(i + 1);
+		vm->carry_list_head = add_list_head(vm->carry_list_head);
+		vm->carry_list_head->pc = MEM_SIZE / vm->number_of_bots * i;
+		vm->carry_list_head->cycles = -1;
+		vm->carry_list_head->alive = 1;
+		vm->carry_list_head->id = i + 1;
+		vm->carry_list_head->registry[0] = -(i + 1);
 		for (int j = 1; j < REG_NUMBER; ++j)
-			carry_list->carry->registry[j] = 0;
+			vm->carry_list_head->registry[j] = 0;
 		n = -1;
 		while (++n < vm->bot[i].size)
 		{
-			vm->map[carry_list->carry->pc + n].val = vm->bot[i].bot[n];
-			vm->map[carry_list->carry->pc + n].id = i + 1;
+			vm->map[vm->carry_list_head->pc + n].val = vm->bot[i].bot[n];
+			vm->map[vm->carry_list_head->pc + n].id = i + 1;
 		}
 	}
-	vm->carry_list_head = carry_list;
 	vm->cycle = 0;
-}
-
-int		cmp_codage(int args, int codage)
-{
-	if (codage == REG_CODE && (args & T_REG))
-		return (1);
-	if (codage == DIR_CODE && (args & T_DIR))
-		return (1);
-	if (codage == IND_CODE && (args & T_IND))
-		return (1);
-	return (0);
-}
-
-int		check_codage(t_map *map, int pc)
-{
-	int i;
-	int c;
-	int opcode;
-	int codage;
-
-	opcode = map[pc].val - 1;
-	codage = map[pc + 1].val; // MEM_SIZE ?
-	if (g_op_tab[opcode].codage == 0)
-		return (1);
-	i = 0;
-	while (++i <= g_op_tab[opcode].args_num)
-	{
-		c = (codage >> (8 - i * 2)) & 3;
-		if (cmp_codage(g_op_tab[opcode].args[i - 1], c) == 0)
-			return (0);
-	}
-	return ((codage & 3) == 0);
 }
 
 void	run_cycle(t_vm *vm)
 {
-	t_list	*list;
+	t_list	*carry;
 
-	list = vm->carry_list_head;
+	carry = vm->carry_list_head;
 	if (vm->v == 1)
 		draw_ncurses(vm);
-	int j = 0;
-	while (list)
+	while (carry)
 	{
-		// printf("%d %d\n", list->carry->pc, vm->map[list->carry->pc].val);
-		// write(1, "ccc\n", 4);
-		// printf("j %d\n", j);
-		// if (list->carry == NULL)
-			// write(1, "nul\n", 4);
-		// write(1, "nnn\n", 4);
-		if (list->carry->cycles == -1)
+		if (vm->map[carry->pc].val > 0 && vm->map[carry->pc].val < 17)
 		{
-			// printf("codage %d\n", check_codage(vm->map, list->carry->pc));
-			if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 17)
-				list->carry->cycles = g_op_tab[vm->map[list->carry->pc].val - 1].cycles;
-			else
-				list->carry->cycles = 0;
+			if (carry->cycles < 0)
+				carry->cycles = g_op_tab[vm->map[carry->pc].val - 1].cycles + 1;
+			else if (carry->cycles == 0)
+				vm->functions[vm->map[carry->pc].val - 1](carry, vm);
 		}
-		if (list->carry->cycles == 0)
-		{
-			// printf("op %d\n", vm->map[list->carry->pc].val);
-			// if (vm->map[list->carry->pc].val > 0 && vm->map[list->carry->pc].val < 16)
-			if (vm->map[list->carry->pc].val == 2 || vm->map[list->carry->pc].val == 11 ||
-				vm->map[list->carry->pc].val == 4 || vm->map[list->carry->pc].val == 5 ||
-				vm->map[list->carry->pc].val == 13 || vm->map[list->carry->pc].val == 6)
-				vm->functions[vm->map[list->carry->pc].val - 1](list->carry, vm);
-			else
-				iterate(&list->carry->pc, 1);
-		}
-		// printf("%d %d\n", list->carry->cycles, vm->cycle);
-		list->carry->cycles -= 1;
-		list = list->next;
-		// write(1, "aaa\n", 4);
-		j++;
+		else
+			iterate(&carry->pc, 1);
+			// if (g_op_tab[vm->map[carry->pc].val - 1].codage &&
+			// 	!check_codage(vm->map[carry->pc].val - 1, vm->map[iterate(&carry->pc, 1)].val))
+			// 	iterate(&carry->pc, 1);
+		carry->cycles -= 1;
+		carry = carry->next;
 	}
-	// write(1, "bbb\n", 4);
 	vm->cycle += 1;
 }
 
@@ -199,7 +145,7 @@ void	corewar(t_vm *vm)
 {
 	if (vm->v == 1)
 		start_ncurses();
-	while (vm->cycle < 2000)
+	while (vm->cycle < 10000)
 	{
 		if (vm->dump == vm->cycle)
 		{
@@ -218,20 +164,20 @@ void	initiate_structure(t_vm *vm)
 {
 	vm->functions[0] = live;
 	vm->functions[1] = ld;
-	// vm->functions[2] = ;
+	vm->functions[2] = st;
 	vm->functions[3] = add;
 	vm->functions[4] = sub;
 	vm->functions[5] = and;
-	// vm->functions[6] = ;
-	// vm->functions[7] = ;
-	// vm->functions[8] = ;
-	// vm->functions[9] = ;
+	vm->functions[6] = or;
+	vm->functions[7] = xor;
+	vm->functions[8] = zjmp;
+	vm->functions[9] = ldi;
 	vm->functions[10] = sti;
-	// vm->functions[11] = ;
+	vm->functions[11] = fork_op;
 	vm->functions[12] = lld;
-	// vm->functions[13] = ;
-	// vm->functions[14] = ;
-	// vm->functions[15] = ;
+	vm->functions[13] = lldi;
+	vm->functions[14] = lfork;
+	vm->functions[15] = aff;
 	vm->v = 0;
 	vm->dump = -1;
 	vm->cycle_to_die = CYCLE_TO_DIE;
@@ -247,6 +193,7 @@ int		main(int argc, char **argv)
 {
 	t_vm	vm;
 
+	setbuf(stdout, NULL);
 	initiate_structure(&vm);
 	if (argc < 2)
 	{
