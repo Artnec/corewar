@@ -16,12 +16,6 @@ int		aff(t_list *carry, t_vm *vm)
 {
 	int n;
 
-	iterate(&carry->pc, 2);
-	if (vm->map[carry->pc].val < 1 || vm->map[carry->pc].val > REG_NUMBER)
-	{
-		iterate(&carry->pc, 1);
-		return (0);
-	}
 	if (vm->a == 1)
 	{
 		n = carry->registry[vm->map[carry->pc].val - 1];

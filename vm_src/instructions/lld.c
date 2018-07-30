@@ -12,45 +12,27 @@
 
 #include "corewar.h"
 
-
-
 int		lld(t_list *carry, t_vm *vm)
 {
 	int n;
 	int t;
 
-	// printf("lld\n");
-	carry->p = carry->pc;
-	iterate(&carry->p, 1);
-	if (vm->map[carry->p].val == 0xd0)
+	if (carry->codage == 0xd24)
 	{
-		iterate(&carry->p, 1);
-		n = (carry->pc + get_usrt(vm->map, carry->p)) % MEM_SIZE;
-		iterate(&carry->p, 2);
-		if (vm->map[carry->p].val < 1 || vm->map[carry->p].val > REG_NUMBER)
-		{
-			carry->pc = iterate(&carry->p, 1);
-			return (0);
-		}
+		n = carry->op;
+		iterate(&n, get_short(vm->map, carry->pc) % MEM_SIZE);
 		t = get_uint(vm->map, n);
 		t = t > 0x7fffffff ? (t >> 16) | 0xffff0000 : t >> 16;
-		carry->registry[vm->map[carry->p].val - 1] = t;
-		carry->carry = carry->registry[vm->map[carry->p].val - 1] == 0 ? 1 : 0;
-		carry->pc = iterate(&carry->p, 1);
+		iterate(&carry->pc, 2);
+		carry->registry[vm->map[carry->pc].val - 1] = t;
 	}
-	else if (vm->map[carry->p].val == 0x90)
+	else if (carry->codage == 0x34)
 	{
-		iterate(&carry->p, 1);
-		n = get_uint(vm->map, carry->p);
-		iterate(&carry->p, 4);
-		if (vm->map[carry->p].val < 1 || vm->map[carry->p].val > REG_NUMBER)
-		{
-			carry->pc = iterate(&carry->p, 1);
-			return (0);
-		}
-		carry->registry[vm->map[carry->p].val - 1] = n;
-		carry->carry = carry->registry[vm->map[carry->p].val - 1] == 0 ? 1 : 0;
-		carry->pc = iterate(&carry->p, 1);
+		n = get_uint(vm->map, carry->pc);
+		iterate(&carry->pc, 4);
+		carry->registry[vm->map[carry->pc].val - 1] = n;
 	}
+	carry->carry = carry->registry[vm->map[carry->pc].val - 1] == 0 ? 1 : 0;
+	carry->pc = iterate(&carry->pc, 1);
 	return (0);
 }

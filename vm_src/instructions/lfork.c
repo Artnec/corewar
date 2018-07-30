@@ -14,11 +14,8 @@
 
 int		lfork(t_list *carry, t_vm *vm)
 {
-	carry->p = carry->pc;
-	iterate(&carry->p, 1);
-	fork_carry(carry, vm, (short)get_usrt(vm->map, carry->p));
-	iterate(&carry->pc, 3);
+	fork_carry(carry, vm, get_short(vm->map, carry->pc));
+	iterate(&carry->pc, 2);
 	vm->processes++;
 	return (0);
 }
-

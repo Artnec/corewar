@@ -17,20 +17,10 @@ int		xor(t_list *carry, t_vm *vm)
 	int j;
 	int n;
 
-	// printf("xor\n");
-	carry->p = carry->pc;
-	iterate(&carry->p, 1);
-	j = vm->map[carry->p].val >> 4;
-	iterate(&carry->p, 1);
+	j = carry->codage >> 2;
 	n = (int)get_rdi_val(carry, j >> 2, 4, vm) ^ (int)get_rdi_val(carry, j & 3, 4, vm);
-	if (vm->map[carry->p].val < 1 || vm->map[carry->p].val > REG_NUMBER)
-	{
-		carry->pc = iterate(&carry->p, 1);
-		return (0);
-	}
-	carry->registry[vm->map[carry->p].val - 1] = n;
-	carry->carry = carry->registry[vm->map[carry->p].val - 1] == 0 ? 1 : 0;
-	carry->pc = iterate(&carry->p, 1);
+	carry->registry[vm->map[carry->pc].val - 1] = n;
+	carry->carry = carry->registry[vm->map[carry->pc].val - 1] == 0 ? 1 : 0;
+	carry->pc = iterate(&carry->pc, 1);
 	return (0);
 }
-

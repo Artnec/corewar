@@ -18,20 +18,12 @@ int		sti(t_list *carry, t_vm *vm)
 	int r;
 	int n;
 
-	// printf("sti\n");
-	carry->p = carry->pc;
-	iterate(&carry->p, 1);
-	j = (vm->map[carry->p].val & 0x3c) >> 2;
-	r = iterate(&carry->p, 1);
-	if (vm->map[r].val < 1 || vm->map[r].val > REG_NUMBER)
-	{
-		// carry->pc = iterate(&carry->p, 1); ???
-		return (0);
-	}
-	iterate(&carry->p, 1);
+	j = carry->codage & 0xf;
+	r = carry->pc;
+	iterate(&carry->pc, 1);
 	n = ((int)(get_rdi_val(carry, j >> 2, 2, vm) + get_rdi_val(carry, j & 3, 2, vm)) % IDX_MOD);
-	n = iterate(&carry->pc, n);
-	uint_to_map(carry->registry[vm->map[r].val - 1], carry->id, vm->map, n);
-	carry->pc = carry->p;
+	j = carry->op;
+	iterate(&j, n);
+	uint_to_map(carry->registry[vm->map[r].val - 1], carry->id, vm->map, j);
 	return (0);
 }

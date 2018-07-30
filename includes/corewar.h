@@ -22,15 +22,18 @@
 
 # include <stdio.h>
 
-# define RC(x)		(x < 1 || x > REG_NUMBER)
-# define ITE(x, y)	(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
+# define RC(x)			(x < 1 || x > REG_NUMBER)
+# define REG_CHECK(x)	(x < 1 || x > REG_NUMBER)
+# define ITE(x, y)		(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
 
 
 typedef struct		s_list
 {
 	int				registry[REG_NUMBER];
 	int				pc;
-	int				p;
+	// int				p;
+	int				op;
+	int				codage;
 	int				id;
 	int				carry;
 	int				cycles;
@@ -97,7 +100,7 @@ void				start_ncurses(void);
 
 
 unsigned int		get_uint(t_map *map, int n);
-unsigned short		get_usrt(t_map *map, int n);
+short				get_short(t_map *map, int n);
 void				uint_to_map(unsigned int n, int id, t_map *map, int i);
 int					get_rdi_val(t_list *carry, int t_rdi, int d, t_vm *vm);
 int					iterate(int *pc, int n);

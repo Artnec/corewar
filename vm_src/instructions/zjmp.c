@@ -14,11 +14,9 @@
 
 int		zjmp(t_list *carry, t_vm *vm)
 {
-	carry->p = carry->pc;
-	iterate(&carry->p, 1);
 	if (carry->carry == 1)
-		iterate(&carry->pc, (short)get_rdi_val(carry, DIR_CODE, 2, vm) % IDX_MOD);
+		carry->pc = iterate(&carry->op, get_short(vm->map, carry->pc) % IDX_MOD);
 	else
-		iterate(&carry->pc, 3);
+		iterate(&carry->pc, 2);
 	return (0);
 }

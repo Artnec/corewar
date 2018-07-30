@@ -16,6 +16,6 @@ int		live(t_list *carry, t_vm *vm)
 {
 	// carry->alive = 1;
 	(void)vm;
-	iterate(&carry->pc, 5);
+	iterate(&carry->pc, 4);
 	return (0);
 }
