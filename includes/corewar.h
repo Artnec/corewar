@@ -18,6 +18,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <ncurses.h>
+# include <time.h>
 
 
 # include <stdio.h>
@@ -70,6 +71,7 @@ typedef struct		s_vm
 	int				cycle;
 	int				cycle_to_die;
 	int				processes;
+	int				fps;
 }					t_vm;
 
 typedef struct		s_op
@@ -97,6 +99,9 @@ void				exit_error(char *error_message);
 
 void				draw_ncurses(t_vm *vm);
 void				start_ncurses(void);
+// void				pause_ncurses(t_vm *vm);
+// void				draw_info(t_vm *vm);
+void				key_control(t_vm *vm);
 
 
 unsigned int		get_uint(t_map *map, int n);

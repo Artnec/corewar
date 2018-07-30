@@ -30,13 +30,27 @@ static void		draw_carrys(t_vm *vm)
 	}
 }
 
-void			pause_ncurses(void)
+void			pause_ncurses(t_vm *vm)
 {
+	int		k;
+
 	// mvwprintw(stdscr, 40, 199, "%d", getch());
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 2, 199, "** PAUSED  **");
-	while (getch() != 32)
-		;
+	while ((k = getch()))
+	{
+		if (k == 113)
+			vm->fps = (vm->fps > 10 ? vm->fps - 10 : 1);
+		else if (k == 119)
+			vm->fps -= (vm->fps > 1 ? 1 : 0);
+		else if (k == 101)
+			vm->fps++;
+		else if (k == 114)
+			vm->fps += 10;
+		else if (k == 32)
+			break ;
+		mvwprintw(stdscr, 4, 221, "%d      ", vm->fps);
+	}
 	mvwprintw(stdscr, 2, 199, "** RUNNING **");
 	wattroff(stdscr, A_BOLD | COLOR_PAIR(50));
 }
@@ -46,7 +60,7 @@ void			draw_info(t_vm *vm)
 	int n;
 
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
-	mvwprintw(stdscr, 4, 199, "Cycles/second limit : 50");
+	mvwprintw(stdscr, 4, 221, "%d      ", vm->fps);
 	mvwprintw(stdscr, 7, 199, "Cycle : %d", vm->cycle);
 	mvwprintw(stdscr, 9, 199, "Processes : %d", vm->processes);
 	for (n = 0; n < vm->number_of_bots; ++n)
@@ -65,6 +79,24 @@ void			draw_info(t_vm *vm)
 	wattroff(stdscr, A_BOLD | COLOR_PAIR(50));
 }
 
+void			key_control(t_vm *vm)
+{
+	int		k;
+
+	k = getch();
+	if (k == 113)
+		vm->fps = (vm->fps > 10 ? vm->fps - 10 : 1);
+	else if (k == 119)
+		vm->fps -= (vm->fps > 1 ? 1 : 0);
+	else if (k == 101)
+		vm->fps++;
+	else if (k == 114)
+		vm->fps += 10;
+	else if (k == 32)
+		pause_ncurses(vm);
+	draw_info(vm);
+}
+
 void			draw_ncurses(t_vm *vm)
 {
 	int		i;
@@ -73,8 +105,8 @@ void			draw_ncurses(t_vm *vm)
 
 	j = 0;
 	n = 1;
-	if (getch() == 32)
-		pause_ncurses();
+	// if (getch() == 32)
+	// 	pause_ncurses(vm);
 	while (++n < 66)
 	{
 		i = 3;
@@ -94,8 +126,8 @@ void			draw_ncurses(t_vm *vm)
 	draw_info(vm);
 	wrefresh(stdscr);
 	if (vm->cycle == 0)
-		pause_ncurses();
-	usleep(20000);
+		pause_ncurses(vm);
+	// usleep(20000);
 }
 
 static void		draw_border(void)
@@ -103,9 +135,10 @@ static void		draw_border(void)
 	int n;
 
 	n = -1;
-	wattron(stdscr, A_BOLD | COLOR_PAIR(4));
+	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 2, 215, "***********************************");
-	wattroff(stdscr, A_BOLD | COLOR_PAIR(4));
+	mvwprintw(stdscr, 4, 199, "Cycles/second limit :");
+	wattroff(stdscr, A_BOLD | COLOR_PAIR(50));
 	wattron(stdscr, COLOR_PAIR(100));
 	while (++n < 68)
 	{

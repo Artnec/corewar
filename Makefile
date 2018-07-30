@@ -35,6 +35,7 @@ VFLAGS			=	-lmlx -framework OpenGL -framework AppKit -Ofast -O3
 VM_OBJ			=	$(addprefix $(VM_OBJ_DIR), $(VM_SRC:.c=.o))
 VM_INS_OBJ		=	$(addprefix $(VM_OBJ_DIR), $(VM_INS_SRC:.c=.o))
 ASM_OBJ			=	$(addprefix $(ASM_OBJ_DIR), $(ASM_SRC:.c=.o))
+INC_FILES		=	$(addprefix $(INC_DIR), $(INC))
 
 VM_SRC_DIR		=	./vm_src/
 VM_INS_SRC_DIR	=	./vm_src/instructions/
@@ -42,6 +43,7 @@ ASM_SRC_DIR		=	./asm_src/
 VM_OBJ_DIR		=	./vm_obj/
 ASM_OBJ_DIR		=	./asm_obj/
 INC_DIR			=	./includes/
+INC				=	asm.h	corewar.h	op.h
 
 NC				=	\033[0m
 BLUE			=	\033[3;36m
@@ -53,11 +55,11 @@ RED				=	\033[3;31m
 
 all: $(VM) $(ASM)
 
-$(VM_OBJ_DIR)%.o: $(VM_SRC_DIR)%.c
+$(VM_OBJ_DIR)%.o: $(VM_SRC_DIR)%.c $(INC_FILES)
 	@mkdir -p $(VM_OBJ_DIR)
 	@$(CC) $(FLAGS) -I $(INC_DIR) -o $@ -c $<
 
-$(VM_OBJ_DIR)%.o: $(VM_INS_SRC_DIR)%.c
+$(VM_OBJ_DIR)%.o: $(VM_INS_SRC_DIR)%.c $(INC_FILES)
 	@$(CC) $(FLAGS) -I $(INC_DIR) -o $@ -c $<
 
 $(VM): $(VM_OBJ) $(VM_INS_OBJ)

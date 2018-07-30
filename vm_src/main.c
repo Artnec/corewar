@@ -204,6 +204,11 @@ void	run_cycle(t_vm *vm)
 
 void	corewar(t_vm *vm)
 {
+	clock_t		t1;
+	clock_t		t2;
+
+	t1 = clock();
+	t2 = clock() * CLOCKS_PER_SEC;
 	if (vm->v == 1)
 		start_ncurses();
 	while (vm->cycle < 10000)
@@ -215,7 +220,18 @@ void	corewar(t_vm *vm)
 		}
 		// if (vm->cycle == vm->cycle_to_die)
 		// 	;
-		run_cycle(vm);
+		if (vm->v == 1)
+		{
+			key_control(vm);
+			if ((int)(t1 * vm->fps / CLOCKS_PER_SEC) < (int)(t2 * vm->fps / CLOCKS_PER_SEC))
+			{
+				t1 = clock();
+				run_cycle(vm);
+			}
+			t2 = clock();
+		}
+		else
+			run_cycle(vm);
 	}
 	if (vm->v == 1)
 		endwin();
@@ -248,6 +264,7 @@ void	initiate_structure(t_vm *vm)
 		vm->map[i].val = 0;
 		vm->map[i].bold = 0;
 	}
+	vm->fps = 50;
 }
 
 int		main(int argc, char **argv)
