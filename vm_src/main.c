@@ -69,7 +69,7 @@ void	dump_memory(t_vm *vm)
 		while (++i < 64)
 		{
 			put_octet_in_hex(vm->map[idx + i].val);
-			if (i < 63)
+			// if (i < 63)
 				write(1, " ", 1);
 		}
 		write(1, "\n", 1);
@@ -205,10 +205,9 @@ void	delete_dead_processes(t_list *carry, t_list *prev_carry, t_vm *vm)
 		{
 			if (prev_carry == NULL)
 			{
-				prev_carry = carry;
-				carry = carry->next;
-				free(prev_carry);
-				prev_carry = NULL;
+				vm->carry_list_head = vm->carry_list_head->next;
+				free(carry);
+				carry = vm->carry_list_head;
 			}
 			else
 			{
@@ -231,6 +230,7 @@ void	check_processes(t_vm *vm)
 	int		i;
 	t_list	*carry;
 
+	vm->checks_count++;
 	delete_dead_processes(vm->carry_list_head, NULL, vm);
 	if (vm->processes == 0)
 		vm->carry_list_head = NULL;
@@ -290,22 +290,22 @@ void	corewar(t_vm *vm)
 
 void	initiate_structure(t_vm *vm)
 {
-	vm->functions[0] = live;
-	vm->functions[1] = ld;
-	vm->functions[2] = st;
-	vm->functions[3] = add;
-	vm->functions[4] = sub;
-	vm->functions[5] = and;
-	vm->functions[6] = or;
-	vm->functions[7] = xor;
-	vm->functions[8] = zjmp;
-	vm->functions[9] = ldi;
-	vm->functions[10] = sti;
-	vm->functions[11] = fork_op;
-	vm->functions[12] = lld;
-	vm->functions[13] = lldi;
-	vm->functions[14] = lfork;
-	vm->functions[15] = aff;
+	vm->functions[0] = &live;
+	vm->functions[1] = &ld;
+	vm->functions[2] = &st;
+	vm->functions[3] = &add;
+	vm->functions[4] = &sub;
+	vm->functions[5] = &and;
+	vm->functions[6] = &or;
+	vm->functions[7] = &xor;
+	vm->functions[8] = &zjmp;
+	vm->functions[9] = &ldi;
+	vm->functions[10] = &sti;
+	vm->functions[11] = &fork_op;
+	vm->functions[12] = &lld;
+	vm->functions[13] = &lldi;
+	vm->functions[14] = &lfork;
+	vm->functions[15] = &aff;
 	vm->v = 0;
 	vm->dump = -1;
 	vm->lives_in_cycle = 0;
