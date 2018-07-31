@@ -39,7 +39,7 @@ void	player_introduction(t_vm *vm)
 {
 	write(1, "Introducing contestants...\n", 27);
 	for (int i = 0; i < vm->number_of_bots; i++)
-		printf("  Player %d, weighing %ld bytes, \"%s\" (\"%s\") !\n", i + 1,
+		printf("* Player %d, weighing %ld bytes, \"%s\" (\"%s\") !\n", i + 1,
 			vm->bot[i].size, vm->bot[i].name, vm->bot[i].comment);
 }
 
@@ -197,37 +197,18 @@ void	run_cycle(t_vm *vm)
 	vm->cycle += 1;
 }
 
-void	del_lst(t_list **lst, t_list **prev)
+void	delete_dead_processes(t_list *carry, t_list *prev_carry, t_vm *vm)
 {
-	if (*prev == NULL)
-	{
-		*tmp = *lst;
-		*lst = *lst->next;
-		free(*tmp);
-	}
-	else
-	{
-		*lst = *lst->next;
-		free(*prev->next);
-		*prev->next = *lst;
-	}
-}
-
-void	delete_dead_processes(t_list *carry, t_vm *vm)
-{
-	t_list *prev_carry;
-	t_list *tmp;
-
-	prev_carry = NULL;
 	while (carry)
 	{
 		if (carry->alive == 0)
 		{
 			if (prev_carry == NULL)
 			{
-				tmp = carry;
+				prev_carry = carry;
 				carry = carry->next;
-				free(tmp);
+				free(prev_carry);
+				prev_carry = NULL;
 			}
 			else
 			{
@@ -247,25 +228,18 @@ void	delete_dead_processes(t_list *carry, t_vm *vm)
 
 void	check_processes(t_vm *vm)
 {
-	int i;
-	// t_list *carry;
-	// t_list *prev_carry;
+	int		i;
+	t_list	*carry;
 
-	// prev_carry = NULL;
-	// carry = vm->carry_list_head;
-	delete_dead_processes(vm->carry_list_head, vm);
+	delete_dead_processes(vm->carry_list_head, NULL, vm);
 	if (vm->processes == 0)
 		vm->carry_list_head = NULL;
-	// while (carry)
-	// {
-	// 	if (carry->alive == 0)
-	// 	{
-	// 		vm->processes -= 1;
-	// 		del_lst(&carry, &prev_carry);
-	// 	}
-	// 	prev_carry = carry;
-	// 	carry = carry->next;
-	// }
+	carry = vm->carry_list_head;
+	while (carry)
+	{
+		carry->alive = 0;
+		carry = carry->next;
+	}
 	if (vm->checks_count == MAX_CHECKS)
 	{
 		vm->cycle_to_die -= CYCLE_DELTA;
@@ -288,7 +262,7 @@ void	corewar(t_vm *vm)
 	t2 = clock() * CLOCKS_PER_SEC;
 	if (vm->v == 1)
 		start_ncurses();
-	while (vm->cycle < 100000)
+	while (vm->processes > 0)
 	{
 		if (vm->dump == vm->cycle)
 		{
@@ -311,7 +285,7 @@ void	corewar(t_vm *vm)
 			run_cycle(vm);
 	}
 	if (vm->v == 1)
-		endwin();
+		end_ncurses(vm);
 }
 
 void	initiate_structure(t_vm *vm)
