@@ -23,7 +23,6 @@
 
 # include <stdio.h>
 
-# define RC(x)			(x < 1 || x > REG_NUMBER)
 # define REG_CHECK(x)	(x < 1 || x > REG_NUMBER)
 # define ITE(x, y)		(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
 
@@ -32,7 +31,6 @@ typedef struct		s_list
 {
 	int				registry[REG_NUMBER];
 	int				pc;
-	// int				p;
 	int				op;
 	int				codage;
 	int				id;
@@ -55,6 +53,8 @@ typedef struct		s_bot
 	char			comment[COMMENT_LENGTH];
 	unsigned char	bot[CHAMP_MAX_SIZE];
 	long			size;
+	int				lives_in_cycle;
+	int				last_live;
 }					t_bot;
 
 typedef struct		s_vm
@@ -70,7 +70,9 @@ typedef struct		s_vm
 	int				(*functions[16])(t_list *carry, struct s_vm *);
 	int				cycle;
 	int				cycle_to_die;
+	int				checks_count;
 	int				processes;
+	int				lives_in_cycle;
 	int				fps;
 }					t_vm;
 
@@ -99,6 +101,7 @@ void				exit_error(char *error_message);
 
 void				draw_ncurses(t_vm *vm);
 void				start_ncurses(void);
+void				end_ncurses(t_vm *vm);
 // void				pause_ncurses(t_vm *vm);
 // void				draw_info(t_vm *vm);
 void				key_control(t_vm *vm);

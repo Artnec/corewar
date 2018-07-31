@@ -23,10 +23,7 @@ unsigned int	get_uint(t_map *map, int n)
 
 short			get_short(t_map *map, int n)
 {
-	if (n + 1 == MEM_SIZE)
-		return (map[n].val << 8 | map[0].val);
-	return (map[n].val << 8 | map[n + 1].val);
-	// return (map[n].val << 8 | map[n + 1 == MEM_SIZE ? 0 : n + 1].val);
+	return (map[n].val << 8 | (map[n + 1 == MEM_SIZE ? 0 : n + 1].val));
 }
 
 int				get_rdi_val(t_list *carry, int t_rdi, int d, t_vm *vm)

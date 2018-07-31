@@ -69,10 +69,10 @@ void			draw_info(t_vm *vm)
 		wattron(stdscr, COLOR_PAIR(n + 1));
 		mvwprintw(stdscr, 11 + n * 4, 211, "%.41s", vm->bot[n].name);
 		wattroff(stdscr, COLOR_PAIR(n + 1));
-		mvwprintw(stdscr, 12 + n * 4, 201, "Last live : %21d", 0);
-		mvwprintw(stdscr, 13 + n * 4, 201, "Lives in current period : %7d", 0);
+		mvwprintw(stdscr, 12 + n * 4, 201, "Last live : %21d", vm->bot[n].last_live);
+		mvwprintw(stdscr, 13 + n * 4, 201, "Lives in current period : %7d", vm->bot[n].lives_in_cycle);
 	}
-	mvwprintw(stdscr, 17 + n * 4, 199, "CYCLE_TO_DIE : %d", vm->cycle_to_die);
+	mvwprintw(stdscr, 17 + n * 4, 199, "CYCLE_TO_DIE : %d    ", vm->cycle_to_die);
 	mvwprintw(stdscr, 19 + n * 4, 199, "CYCLE_DELTA : %d", CYCLE_DELTA);
 	mvwprintw(stdscr, 21 + n * 4, 199, "NBR_LIVE : %d", NBR_LIVE);
 	mvwprintw(stdscr, 23 + n * 4, 199, "MAX_CHECKS : %d", MAX_CHECKS);
@@ -89,12 +89,11 @@ void			key_control(t_vm *vm)
 	else if (k == 119)
 		vm->fps -= (vm->fps > 1 ? 1 : 0);
 	else if (k == 101)
-		vm->fps++;
+		vm->fps += (vm->fps < 1000 ? 1 : 0);
 	else if (k == 114)
-		vm->fps += 10;
+		vm->fps = (vm->fps < 990 ? vm->fps + 10 : 1000);
 	else if (k == 32)
 		pause_ncurses(vm);
-	draw_info(vm);
 }
 
 void			draw_ncurses(t_vm *vm)
@@ -155,6 +154,21 @@ static void		draw_border(void)
 	wattroff(stdscr, COLOR_PAIR(100));
 }
 
+void			end_ncurses(t_vm *vm)
+{
+	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
+	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 199, "The winner is :");
+	wattron(stdscr, COLOR_PAIR(0 + 1));
+	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 215, "%.41s", vm->bot[0].name);
+	wattroff(stdscr, COLOR_PAIR(0 + 1));
+	mvwprintw(stdscr, 27 + vm->number_of_bots * 4, 199, "Press any key to finish");
+	wattroff(stdscr, A_BOLD | COLOR_PAIR(50));
+	wrefresh(stdscr);
+	while ((getch()) <= 0)
+		;
+	endwin();
+}
+
 void			start_ncurses(void)
 {
 	initscr();
@@ -178,4 +192,5 @@ void			start_ncurses(void)
 	init_pair(4, COLOR_CYAN, COLOR_BLACK);
 	init_pair(9, COLOR_BLACK, COLOR_CYAN);
 	draw_border();
+	// draw_static_info();
 }

@@ -99,9 +99,11 @@ void	initiate_carrys_and_map(t_vm *vm)
 		vm->carry_list_head = add_list_head(vm->carry_list_head);
 		vm->carry_list_head->pc = MEM_SIZE / vm->number_of_bots * i;
 		vm->carry_list_head->cycles = 0;
-		vm->carry_list_head->alive = 1;
+		vm->carry_list_head->alive = 0;
 		vm->carry_list_head->id = i + 1;
 		vm->carry_list_head->registry[0] = -(i + 1);
+		vm->bot[i].lives_in_cycle = 0;
+		vm->bot[i].last_live = 0;
 		for (int j = 1; j < REG_NUMBER; ++j)
 			vm->carry_list_head->registry[j] = 0;
 		n = -1;
@@ -118,30 +120,28 @@ int		check_opcode_with_codage(int op, int p, t_list *carry, t_vm *vm)
 {
 	int i;
 	int error;
-	int g;
 	int c;
 
 	error = 0;
 	i = -1;
 	while (++i < g_op_tab[op].args_num)
 	{
-		g = g_op_tab[op].args[i];
 		c = (carry->codage >> (4 - i * 2)) & 3;
 		if (c == REG_CODE)
 		{
-			if (!(g & T_REG) || REG_CHECK(vm->map[p].val))
+			if (!(g_op_tab[op].args[i] & T_REG) || REG_CHECK(vm->map[p].val))
 				error = 1;
 			iterate(&p, 1);
 		}
 		else if (c == DIR_CODE)
 		{
-			if ((g & T_DIR) == 0)
+			if ((g_op_tab[op].args[i] & T_DIR) == 0)
 				error = 1;
 			iterate(&p, g_op_tab[op].label_size == 1 ? 2 : 4);
 		}
 		else if (c == IND_CODE)
 		{
-			if ((g & T_IND) == 0)
+			if ((g_op_tab[op].args[i] & T_IND) == 0)
 				error = 1;
 			iterate(&p, 2);
 		}
@@ -182,17 +182,12 @@ void	run_cycle(t_vm *vm)
 		draw_ncurses(vm);
 	while (carry)
 	{
-		// printf("%d %d\n", carry->registry[0], vm->map[carry->pc].val);
-		// printf("%d %d %d\n", carry->cycles, vm->map[carry->pc].val, g_op_tab[vm->map[carry->pc].val - 1].cycles);
 		if (vm->map[carry->pc].val > 0 && vm->map[carry->pc].val < 17)
 		{
 			if (carry->cycles <= 0)
 				carry->cycles = g_op_tab[vm->map[carry->pc].val - 1].cycles;
 			else if (carry->cycles == 1 && check_codage_and_regs(carry, vm))
-			{
-				// printf("ex\n");
 				vm->functions[vm->map[carry->op].val - 1](carry, vm);
-			}
 		}
 		else
 			iterate(&carry->pc, 1);
@@ -200,6 +195,88 @@ void	run_cycle(t_vm *vm)
 		carry = carry->next;
 	}
 	vm->cycle += 1;
+}
+
+void	del_lst(t_list **lst, t_list **prev)
+{
+	if (*prev == NULL)
+	{
+		*tmp = *lst;
+		*lst = *lst->next;
+		free(*tmp);
+	}
+	else
+	{
+		*lst = *lst->next;
+		free(*prev->next);
+		*prev->next = *lst;
+	}
+}
+
+void	delete_dead_processes(t_list *carry, t_vm *vm)
+{
+	t_list *prev_carry;
+	t_list *tmp;
+
+	prev_carry = NULL;
+	while (carry)
+	{
+		if (carry->alive == 0)
+		{
+			if (prev_carry == NULL)
+			{
+				tmp = carry;
+				carry = carry->next;
+				free(tmp);
+			}
+			else
+			{
+				carry = carry->next;
+				free(prev_carry->next);
+				prev_carry->next = carry;
+			}
+			vm->processes -= 1;
+		}
+		else
+		{
+			prev_carry = carry;
+			carry = carry->next;
+		}
+	}
+}
+
+void	check_processes(t_vm *vm)
+{
+	int i;
+	// t_list *carry;
+	// t_list *prev_carry;
+
+	// prev_carry = NULL;
+	// carry = vm->carry_list_head;
+	delete_dead_processes(vm->carry_list_head, vm);
+	if (vm->processes == 0)
+		vm->carry_list_head = NULL;
+	// while (carry)
+	// {
+	// 	if (carry->alive == 0)
+	// 	{
+	// 		vm->processes -= 1;
+	// 		del_lst(&carry, &prev_carry);
+	// 	}
+	// 	prev_carry = carry;
+	// 	carry = carry->next;
+	// }
+	if (vm->checks_count == MAX_CHECKS)
+	{
+		vm->cycle_to_die -= CYCLE_DELTA;
+		vm->checks_count = 0;
+	}
+	else if (vm->lives_in_cycle >= NBR_LIVE)
+		vm->cycle_to_die -= CYCLE_DELTA;
+	vm->lives_in_cycle = 0;
+	i = 0;
+	while (i < vm->number_of_bots)
+		vm->bot[i++].lives_in_cycle = 0;
 }
 
 void	corewar(t_vm *vm)
@@ -211,15 +288,15 @@ void	corewar(t_vm *vm)
 	t2 = clock() * CLOCKS_PER_SEC;
 	if (vm->v == 1)
 		start_ncurses();
-	while (vm->cycle < 10000)
+	while (vm->cycle < 100000)
 	{
 		if (vm->dump == vm->cycle)
 		{
 			dump_memory(vm);
 			return ;
 		}
-		// if (vm->cycle == vm->cycle_to_die)
-		// 	;
+		if (vm->cycle != 0 && vm->cycle % vm->cycle_to_die == 0)
+			check_processes(vm);
 		if (vm->v == 1)
 		{
 			key_control(vm);
@@ -257,6 +334,8 @@ void	initiate_structure(t_vm *vm)
 	vm->functions[15] = aff;
 	vm->v = 0;
 	vm->dump = -1;
+	vm->lives_in_cycle = 0;
+	vm->checks_count = 0;
 	vm->cycle_to_die = CYCLE_TO_DIE;
 	for (int i = 0; i < MEM_SIZE; i++)
 	{
