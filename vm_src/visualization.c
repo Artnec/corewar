@@ -44,9 +44,9 @@ void			pause_ncurses(t_vm *vm)
 		else if (k == 119)
 			vm->fps -= (vm->fps > 1 ? 1 : 0);
 		else if (k == 101)
-			vm->fps++;
+			vm->fps += (vm->fps == 1000 ? 0 : 1);
 		else if (k == 114)
-			vm->fps += 10;
+			vm->fps = (vm->fps > 990 ? 1000 : vm->fps + 10);
 		else if (k == 32)
 			break ;
 		mvwprintw(stdscr, 4, 221, "%d      ", vm->fps);

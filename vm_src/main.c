@@ -173,30 +173,6 @@ int		check_codage_and_regs(t_list *carry, t_vm *vm)
 	return (error == 0);
 }
 
-void	run_cycle(t_vm *vm)
-{
-	t_list	*carry;
-
-	carry = vm->carry_list_head;
-	if (vm->v == 1)
-		draw_ncurses(vm);
-	while (carry)
-	{
-		if (vm->map[carry->pc].val > 0 && vm->map[carry->pc].val < 17)
-		{
-			if (carry->cycles <= 0)
-				carry->cycles = g_op_tab[vm->map[carry->pc].val - 1].cycles;
-			else if (carry->cycles == 1 && check_codage_and_regs(carry, vm))
-				vm->functions[vm->map[carry->op].val - 1](carry, vm);
-		}
-		else
-			iterate(&carry->pc, 1);
-		carry->cycles -= 1;
-		carry = carry->next;
-	}
-	vm->cycle += 1;
-}
-
 void	delete_dead_processes(t_list *carry, t_list *prev_carry, t_vm *vm)
 {
 	while (carry)
@@ -253,6 +229,32 @@ void	check_processes(t_vm *vm)
 		vm->bot[i++].lives_in_cycle = 0;
 }
 
+void	run_cycle(t_vm *vm)
+{
+	t_list	*carry;
+
+	carry = vm->carry_list_head;
+	if (vm->v == 1)
+		draw_ncurses(vm);
+	while (carry)
+	{
+		if (vm->map[carry->pc].val > 0 && vm->map[carry->pc].val < 17)
+		{
+			if (carry->cycles <= 0)
+				carry->cycles = g_op_tab[vm->map[carry->pc].val - 1].cycles;
+			else if (carry->cycles == 1 && check_codage_and_regs(carry, vm))
+				vm->functions[vm->map[carry->op].val - 1](carry, vm);
+		}
+		else
+			iterate(&carry->pc, 1);
+		carry->cycles -= 1;
+		carry = carry->next;
+	}
+	vm->cycle += 1;
+	if (vm->cycle != 0 && vm->cycle % vm->cycle_to_die == 0)
+		check_processes(vm);
+}
+
 void	corewar(t_vm *vm)
 {
 	clock_t		t1;
@@ -269,8 +271,6 @@ void	corewar(t_vm *vm)
 			dump_memory(vm);
 			return ;
 		}
-		if (vm->cycle != 0 && vm->cycle % vm->cycle_to_die == 0)
-			check_processes(vm);
 		if (vm->v == 1)
 		{
 			key_control(vm);
@@ -285,7 +285,10 @@ void	corewar(t_vm *vm)
 			run_cycle(vm);
 	}
 	if (vm->v == 1)
+	{
+		draw_ncurses(vm);
 		end_ncurses(vm);
+	}
 }
 
 void	initiate_structure(t_vm *vm)
