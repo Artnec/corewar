@@ -25,7 +25,7 @@ int		live(t_list *carry, t_vm *vm)
 		if (n == -i)
 		{
 			vm->bot[i - 1].lives_in_cycle += 1;
-			vm->bot[i - 1].last_live = vm->cycle;
+			vm->bot[i - 1].last_live = vm->cycle + 1;
 			vm->lives_in_cycle++;
 		}
 	}

@@ -250,9 +250,9 @@ void	run_cycle(t_vm *vm)
 		carry->cycles -= 1;
 		carry = carry->next;
 	}
-	vm->cycle += 1;
-	if (vm->cycle != 0 && vm->cycle % vm->cycle_to_die == 0)
+	if (vm->cycle != 0 && vm->cycle % (vm->cycle_to_die + 1) == 0)
 		check_processes(vm);
+	vm->cycle += 1;
 }
 
 void	corewar(t_vm *vm)

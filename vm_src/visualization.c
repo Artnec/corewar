@@ -62,7 +62,7 @@ void			draw_info(t_vm *vm)
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 4, 221, "%d      ", vm->fps);
 	mvwprintw(stdscr, 7, 199, "Cycle : %d", vm->cycle);
-	mvwprintw(stdscr, 9, 199, "Processes : %d", vm->processes);
+	mvwprintw(stdscr, 9, 199, "Processes : %d      ", vm->processes);
 	for (n = 0; n < vm->number_of_bots; ++n)
 	{
 		mvwprintw(stdscr, 11 + n * 4, 199, "Player %d :", -(n + 1));
