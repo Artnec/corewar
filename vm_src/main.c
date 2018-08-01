@@ -114,7 +114,6 @@ void	initiate_carrys_and_map(t_vm *vm)
 			vm->map[vm->carry_list_head->pc + n].id = i + 1;
 		}
 	}
-	vm->cycle = 0;
 }
 
 int		check_opcode_with_codage(int op, int p, t_list *carry, t_vm *vm)
@@ -228,6 +227,7 @@ void	check_processes(t_vm *vm)
 	i = 0;
 	while (i < vm->number_of_bots)
 		vm->bot[i++].lives_in_cycle = 0;
+	vm->cycle_alive = 0;
 }
 
 void	run_cycle(t_vm *vm)
@@ -255,9 +255,10 @@ void	run_cycle(t_vm *vm)
 		carry->cycles -= 1;
 		carry = carry->next;
 	}
-	vm->cycle += 1;
-	if (vm->cycle != 0 && vm->cycle % vm->cycle_to_die == 0)
+	if (vm->cycle != 0 && vm->cycle_alive == vm->cycle_to_die)
 		check_processes(vm);
+	vm->cycle += 1;
+	vm->cycle_alive += 1;
 }
 
 void	corewar(t_vm *vm)
@@ -294,6 +295,11 @@ void	corewar(t_vm *vm)
 		draw_ncurses(vm);
 		end_ncurses(vm);
 	}
+	else
+	{
+		int w = get_winner(vm);
+		printf("Contestant %d, \"%s\", has won !\n", w + 1, vm->bot[w].name);
+	}
 }
 
 void	initiate_structure(t_vm *vm)
@@ -326,6 +332,8 @@ void	initiate_structure(t_vm *vm)
 		vm->map[i].bold = 0;
 	}
 	vm->fps = 50;
+	vm->cycle = 0;
+	vm->cycle_alive = 0;
 }
 
 int		get_winner(t_vm *vm)
@@ -361,11 +369,10 @@ int		main(int argc, char **argv)
 	parse_arguments(argc, argv, &vm);
 	// printf("dump: %d\nv: %d\n", vm.dump, vm.v);
 	read_cor_files(&vm);
-	player_introduction(&vm);
+	if (vm.v != 1)
+		player_introduction(&vm);
 	initiate_carrys_and_map(&vm);
 	corewar(&vm);
-	int w = get_winner(&vm);
-	printf("Contestant %d, \"%s\", has won !\n", w + 1, vm.bot[w].name);
 	// system("say  -r 170 bot 2, won");
 	return (0);
 }

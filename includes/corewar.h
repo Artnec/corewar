@@ -71,6 +71,7 @@ typedef struct		s_vm
 	t_map			map[MEM_SIZE];
 	int				(*functions[16])(t_list *carry, struct s_vm *);
 	int				cycle;
+	int				cycle_alive;
 	int				cycle_to_die;
 	int				checks_count;
 	int				processes;
