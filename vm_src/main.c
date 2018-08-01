@@ -102,6 +102,7 @@ void	initiate_carrys_and_map(t_vm *vm)
 		vm->carry_list_head->alive = 0;
 		vm->carry_list_head->id = i + 1;
 		vm->carry_list_head->registry[0] = -(i + 1);
+		vm->carry_list_head->opcode = -1;
 		vm->bot[i].lives_in_cycle = 0;
 		vm->bot[i].last_live = 0;
 		for (int j = 1; j < REG_NUMBER; ++j)
@@ -160,7 +161,7 @@ int		check_codage_and_regs(t_list *carry, t_vm *vm)
 
 	error = 0;
 	carry->op = carry->pc;
-	op = vm->map[carry->op].val - 1;
+	op = carry->opcode;
 	iterate(&carry->pc, 1);
 	if (g_op_tab[op].codage == 1)
 	{
@@ -238,21 +239,25 @@ void	run_cycle(t_vm *vm)
 		draw_ncurses(vm);
 	while (carry)
 	{
-		if (vm->map[carry->pc].val > 0 && vm->map[carry->pc].val < 17)
+		if (carry->opcode == -1 && IS_VALID_OPCODE(vm->map[carry->pc].val))
 		{
-			if (carry->cycles <= 0)
-				carry->cycles = g_op_tab[vm->map[carry->pc].val - 1].cycles;
-			else if (carry->cycles == 1 && check_codage_and_regs(carry, vm))
-				vm->functions[vm->map[carry->op].val - 1](carry, vm);
+			carry->opcode = vm->map[carry->pc].val - 1;
+			carry->cycles = g_op_tab[carry->opcode].cycles;
 		}
-		else
+		else if (carry->opcode == -1)
 			iterate(&carry->pc, 1);
+		if (carry->cycles == 1)
+		{
+			if (check_codage_and_regs(carry, vm))
+				vm->functions[carry->opcode](carry, vm);
+			carry->opcode = -1;
+		}
 		carry->cycles -= 1;
 		carry = carry->next;
 	}
-	if (vm->cycle != 0 && vm->cycle % (vm->cycle_to_die + 1) == 0)
-		check_processes(vm);
 	vm->cycle += 1;
+	if (vm->cycle != 0 && vm->cycle % vm->cycle_to_die == 0)
+		check_processes(vm);
 }
 
 void	corewar(t_vm *vm)
@@ -323,6 +328,25 @@ void	initiate_structure(t_vm *vm)
 	vm->fps = 50;
 }
 
+int		get_winner(t_vm *vm)
+{
+	int i;
+	int m;
+	int b;
+
+	m = -1;
+	i = vm->number_of_bots;
+	while (--i >= 0)
+	{
+		if (vm->bot[i].last_live > m)
+		{
+			m = vm->bot[i].last_live;
+			b = i;
+		}
+	}
+	return (b);
+}
+
 int		main(int argc, char **argv)
 {
 	t_vm	vm;
@@ -340,6 +364,8 @@ int		main(int argc, char **argv)
 	player_introduction(&vm);
 	initiate_carrys_and_map(&vm);
 	corewar(&vm);
+	int w = get_winner(&vm);
+	printf("Contestant %d, \"%s\", has won !\n", w + 1, vm.bot[w].name);
 	// system("say  -r 170 bot 2, won");
 	return (0);
 }

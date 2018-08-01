@@ -156,11 +156,14 @@ static void		draw_border(void)
 
 void			end_ncurses(t_vm *vm)
 {
+	int w;
+
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 199, "The winner is :");
-	wattron(stdscr, COLOR_PAIR(0 + 1));
-	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 215, "%.37s", vm->bot[0].name);
-	wattroff(stdscr, COLOR_PAIR(0 + 1));
+	w = get_winner(vm);
+	wattron(stdscr, COLOR_PAIR(w + 1));
+	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 215, "%.37s", vm->bot[w].name);
+	wattroff(stdscr, COLOR_PAIR(w + 1));
 	mvwprintw(stdscr, 27 + vm->number_of_bots * 4, 199, "Press any key to finish");
 	wattroff(stdscr, A_BOLD | COLOR_PAIR(50));
 	wrefresh(stdscr);

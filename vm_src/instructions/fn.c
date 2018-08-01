@@ -88,6 +88,7 @@ void	fork_carry(t_list *orig_carry, t_vm *vm, int pos)
 	carry->pc = orig_carry->op;
 	iterate(&carry->pc, pos);
 	carry->cycles = -1;
+	carry->opcode = -1;
 	carry->carry = orig_carry->carry;
 	carry->alive = orig_carry->alive;
 	carry->id = orig_carry->id;

@@ -23,8 +23,9 @@
 
 # include <stdio.h>
 
-# define REG_CHECK(x)	(x < 1 || x > REG_NUMBER)
-# define ITE(x, y)		(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
+# define REG_CHECK(x)		(x < 1 || x > REG_NUMBER)
+# define IS_VALID_OPCODE(x)	(x > 0 && x < 17)
+# define ITE(x, y)			(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
 
 
 typedef struct		s_list
@@ -32,6 +33,7 @@ typedef struct		s_list
 	int				registry[REG_NUMBER];
 	int				pc;
 	int				op;
+	int				opcode;
 	int				codage;
 	int				id;
 	int				carry;
@@ -105,6 +107,7 @@ void				end_ncurses(t_vm *vm);
 // void				pause_ncurses(t_vm *vm);
 // void				draw_info(t_vm *vm);
 void				key_control(t_vm *vm);
+int					get_winner(t_vm *vm);
 
 
 unsigned int		get_uint(t_map *map, int n);
