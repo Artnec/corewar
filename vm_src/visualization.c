@@ -72,7 +72,7 @@ void			draw_info(t_vm *vm)
 		mvwprintw(stdscr, 12 + n * 4, 201, "Last live : %21d", vm->bot[n].last_live);
 		mvwprintw(stdscr, 13 + n * 4, 201, "Lives in current period : %7d", vm->bot[n].lives_in_cycle);
 	}
-	mvwprintw(stdscr, 17 + n * 4, 199, "CYCLE_TO_DIE : %d    ", vm->cycle_to_die);
+	mvwprintw(stdscr, 17 + n * 4, 199, "CYCLE_TO_DIE : %u    ", vm->cycle_to_die);
 	mvwprintw(stdscr, 19 + n * 4, 199, "CYCLE_DELTA : %d", CYCLE_DELTA);
 	mvwprintw(stdscr, 21 + n * 4, 199, "NBR_LIVE : %d", NBR_LIVE);
 	mvwprintw(stdscr, 23 + n * 4, 199, "MAX_CHECKS : %d", MAX_CHECKS);

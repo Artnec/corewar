@@ -22,6 +22,7 @@
 
 
 # include <stdio.h>
+# include <string.h>
 
 # define REG_CHECK(x)		(x < 1 || x > REG_NUMBER)
 # define IS_VALID_OPCODE(x)	(x > 0 && x < 17)
@@ -71,8 +72,8 @@ typedef struct		s_vm
 	t_map			map[MEM_SIZE];
 	int				(*functions[16])(t_list *carry, struct s_vm *);
 	int				cycle;
-	int				cycle_alive;
-	int				cycle_to_die;
+	unsigned int	cycle_alive;
+	unsigned int	cycle_to_die;
 	int				checks_count;
 	int				processes;
 	int				lives_in_cycle;

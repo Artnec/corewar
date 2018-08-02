@@ -177,7 +177,7 @@ void	delete_dead_processes(t_list *carry, t_list *prev_carry, t_vm *vm)
 {
 	while (carry)
 	{
-		if (carry->alive == 0)
+		if (carry->alive == 0 || (int)vm->cycle_to_die <= 0)
 		{
 			if (prev_carry == NULL)
 			{
@@ -237,7 +237,9 @@ void	run_cycle(t_vm *vm)
 	carry = vm->carry_list_head;
 	if (vm->v == 1)
 		draw_ncurses(vm);
-	while (carry)
+	if ((int)vm->cycle_to_die <= 0)
+		delete_dead_processes(vm->carry_list_head, NULL, vm);
+	while (carry && (int)vm->cycle_to_die > 0)
 	{
 		if (carry->opcode == -1 && IS_VALID_OPCODE(vm->map[carry->pc].val))
 		{
@@ -284,22 +286,25 @@ void	corewar(t_vm *vm)
 			{
 				t1 = clock();
 				run_cycle(vm);
+				if (vm->processes == 0 )
+				{
+					while ((int)(t1 * vm->fps / CLOCKS_PER_SEC) >= (int)(t2 * vm->fps / CLOCKS_PER_SEC))
+					{
+						key_control(vm);
+						t2 = clock();
+					}
+					draw_ncurses(vm);
+					end_ncurses(vm);
+					return ;
+				}
 			}
 			t2 = clock();
 		}
 		else
 			run_cycle(vm);
 	}
-	if (vm->v == 1)
-	{
-		draw_ncurses(vm);
-		end_ncurses(vm);
-	}
-	else
-	{
-		int w = get_winner(vm);
-		printf("Contestant %d, \"%s\", has won !\n", w + 1, vm->bot[w].name);
-	}
+	int w = get_winner(vm);
+	printf("Contestant %d, \"%s\", has won !\n", w + 1, vm->bot[w].name);
 }
 
 void	initiate_structure(t_vm *vm)
@@ -351,6 +356,13 @@ int		get_winner(t_vm *vm)
 			m = vm->bot[i].last_live;
 			b = i;
 		}
+	}
+	i = -1;
+	while (++i < vm->number_of_bots)
+	{
+		if (!strcmp(vm->bot[i].name, vm->bot[b].name) &&
+			vm->bot[i].last_live == vm->bot[b].last_live) // !!!!!!!!!!!!!!!!!!!!!!! STRCMP -> FT_STRCMP !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -42
+			return (i);
 	}
 	return (b);
 }
