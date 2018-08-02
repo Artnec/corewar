@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		st(t_list *carry, t_vm *vm)
+int		st(t_lst *carry, t_vm *vm)
 {
 	int j;
 	int r;

@@ -14,7 +14,7 @@
 
 static void		draw_carrys(t_vm *vm)
 {
-	t_list	*tmp;
+	t_lst	*tmp;
 	int 	i;
 	int 	j;
 

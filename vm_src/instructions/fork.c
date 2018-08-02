@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		fork_op(t_list *carry, t_vm *vm)
+int		fork_op(t_lst *carry, t_vm *vm)
 {
 	fork_carry(carry, vm, get_short(vm->map, carry->pc) % IDX_MOD);
 	iterate(&carry->pc, 2);

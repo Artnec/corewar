@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		sub(t_list *carry, t_vm *vm)
+int		sub(t_lst *carry, t_vm *vm)
 {
 	int r1;
 	int r2;

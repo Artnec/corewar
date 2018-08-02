@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		aff(t_list *carry, t_vm *vm)
+int		aff(t_lst *carry, t_vm *vm)
 {
 	int n;
 

@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		zjmp(t_list *carry, t_vm *vm)
+int		zjmp(t_lst *carry, t_vm *vm)
 {
 	if (carry->carry == 1)
 		carry->pc = iterate(&carry->op, get_short(vm->map, carry->pc) % IDX_MOD);

@@ -26,7 +26,7 @@ short			get_short(t_map *map, int n)
 	return (map[n].val << 8 | (map[n + 1 == MEM_SIZE ? 0 : n + 1].val));
 }
 
-int				get_rdi_val(t_list *carry, int t_rdi, int d, t_vm *vm)
+int				get_rdi_val(t_lst *carry, int t_rdi, int d, t_vm *vm)
 {
 	int num;
 
@@ -77,12 +77,12 @@ void			uint_to_map(unsigned int n, int id, t_map *map, int i)
 	map[(i + 3) % MEM_SIZE].bold = 50;
 }
 
-void	fork_carry(t_list *orig_carry, t_vm *vm, int pos)
+void	fork_carry(t_lst *orig_carry, t_vm *vm, int pos)
 {
-	t_list	*carry;
+	t_lst	*carry;
 	int		n;
 
-	carry = (t_list *)malloc(sizeof(t_list));
+	carry = (t_lst *)malloc(sizeof(t_lst));
 	carry->next = vm->carry_list_head;
 	vm->carry_list_head = carry;
 	carry->pc = orig_carry->op;

@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		ld(t_list *carry, t_vm *vm)
+int		ld(t_lst *carry, t_vm *vm)
 {
 	int n;
 

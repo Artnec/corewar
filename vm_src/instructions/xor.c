@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		xor(t_list *carry, t_vm *vm)
+int		xor(t_lst *carry, t_vm *vm)
 {
 	int j;
 	int n;

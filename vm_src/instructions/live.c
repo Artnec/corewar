@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		live(t_list *carry, t_vm *vm)
+int		live(t_lst *carry, t_vm *vm)
 {
 	int i;
 	int n;

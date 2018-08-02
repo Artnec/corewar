@@ -13,6 +13,9 @@
 VM				=	corewar
 ASM				=	asm
 
+LIBFT_DIR		=	./libft/
+LIBFT			=	libft.a
+
 VM_SRC			=	main.c		change_bot_order.c	parse_arguments.c \
 					visualization.c		read_cor_files.c	op.c
 
@@ -36,6 +39,7 @@ VM_OBJ			=	$(addprefix $(VM_OBJ_DIR), $(VM_SRC:.c=.o))
 VM_INS_OBJ		=	$(addprefix $(VM_OBJ_DIR), $(VM_INS_SRC:.c=.o))
 ASM_OBJ			=	$(addprefix $(ASM_OBJ_DIR), $(ASM_SRC:.c=.o))
 INC_FILES		=	$(addprefix $(INC_DIR), $(INC))
+LIB				=	$(addprefix $(LIBFT_DIR), $(LIBFT))
 
 VM_SRC_DIR		=	./vm_src/
 VM_INS_SRC_DIR	=	./vm_src/instructions/
@@ -62,10 +66,14 @@ $(VM_OBJ_DIR)%.o: $(VM_SRC_DIR)%.c $(INC_FILES)
 $(VM_OBJ_DIR)%.o: $(VM_INS_SRC_DIR)%.c $(INC_FILES)
 	@$(CC) $(FLAGS) -I $(INC_DIR) -o $@ -c $<
 
-$(VM): $(VM_OBJ) $(VM_INS_OBJ)
+$(VM): $(VM_OBJ) $(VM_INS_OBJ) $(LIB)
 	@echo "${BLUE}Compiling $(VM) with $(FLAGS) flags${NC}\n..."
-	@$(CC) $(FLAGS) $(NCURSES_FLAG) -o $(VM) $(VM_OBJ) $(VM_INS_OBJ)
+	@$(CC) $(FLAGS) $(NCURSES_FLAG) -o $(VM) $(VM_OBJ) $(VM_INS_OBJ) $(LIB)
 	@echo "${BLUE}Done!${NC}"
+
+$(LIB):
+	@make -C $(LIBFT_DIR)
+	# @echo "\033[3;36mlibft.a has been made\033[0m"
 
 $(ASM_OBJ_DIR)%.o: $(ASM_SRC_DIR)%.c
 	@mkdir -p $(ASM_OBJ_DIR)
@@ -78,7 +86,8 @@ $(ASM): $(ASM_OBJ)
 
 clean:
 	@rm -rf $(VM_OBJ_DIR) $(ASM_OBJ_DIR)
-	@echo  "${RED}$(VM_OBJ_DIR) and $(ASM_OBJ_DIR) has been removed.${NC}"
+	@make fclean -C $(LIBFT_DIR)
+	@echo  "${RED}$(VM_OBJ_DIR), $(LIBFT) and $(ASM_OBJ_DIR) has been removed.${NC}"
 
 fclean: clean
 	@rm -rf $(VM) $(ASM)

@@ -77,11 +77,11 @@ void	dump_memory(t_vm *vm)
 	}
 }
 
-t_list	*add_list_head(t_list *list_head)
+t_lst	*add_list_head(t_lst *list_head)
 {
-	t_list	*list;
+	t_lst	*list;
 
-	list = (t_list *)malloc(sizeof(t_list));
+	list = (t_lst *)malloc(sizeof(t_lst));
 	list->next = list_head;
 	return (list);
 }
@@ -116,7 +116,7 @@ void	initiate_carrys_and_map(t_vm *vm)
 	}
 }
 
-int		check_opcode_with_codage(int op, int p, t_list *carry, t_vm *vm)
+int		check_opcode_with_codage(int op, int p, t_lst *carry, t_vm *vm)
 {
 	int i;
 	int error;
@@ -153,7 +153,7 @@ int		check_opcode_with_codage(int op, int p, t_list *carry, t_vm *vm)
 	return (error);
 }
 
-int		check_codage_and_regs(t_list *carry, t_vm *vm)
+int		check_codage_and_regs(t_lst *carry, t_vm *vm)
 {
 	int error;
 	int op;
@@ -173,7 +173,7 @@ int		check_codage_and_regs(t_list *carry, t_vm *vm)
 	return (error == 0);
 }
 
-void	delete_dead_processes(t_list *carry, t_list *prev_carry, t_vm *vm)
+void	delete_dead_processes(t_lst *carry, t_lst *prev_carry, t_vm *vm)
 {
 	while (carry)
 	{
@@ -204,7 +204,7 @@ void	delete_dead_processes(t_list *carry, t_list *prev_carry, t_vm *vm)
 void	check_processes(t_vm *vm)
 {
 	int		i;
-	t_list	*carry;
+	t_lst	*carry;
 
 	vm->checks_count++;
 	delete_dead_processes(vm->carry_list_head, NULL, vm);
@@ -232,7 +232,7 @@ void	check_processes(t_vm *vm)
 
 void	run_cycle(t_vm *vm)
 {
-	t_list	*carry;
+	t_lst	*carry;
 
 	carry = vm->carry_list_head;
 	if (vm->v == 1)
@@ -241,6 +241,13 @@ void	run_cycle(t_vm *vm)
 		delete_dead_processes(vm->carry_list_head, NULL, vm);
 	while (carry && (int)vm->cycle_to_die > 0)
 	{
+		// if (vm->cycle == 4381)
+		// {
+		// 	printf("%d: ", carry->pc);
+		// 	for (int i = 0; i < 16; i++)
+		// 		printf("%d ", carry->registry[i]);
+		// 	printf("\n");
+		// }
 		if (carry->opcode == -1 && IS_VALID_OPCODE(vm->map[carry->pc].val))
 		{
 			carry->opcode = vm->map[carry->pc].val - 1;
@@ -360,7 +367,7 @@ int		get_winner(t_vm *vm)
 	i = -1;
 	while (++i < vm->number_of_bots)
 	{
-		if (!strcmp(vm->bot[i].name, vm->bot[b].name) &&
+		if (!ft_strcmp(vm->bot[i].name, vm->bot[b].name) &&
 			vm->bot[i].last_live == vm->bot[b].last_live) // !!!!!!!!!!!!!!!!!!!!!!! STRCMP -> FT_STRCMP !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -42
 			return (i);
 	}

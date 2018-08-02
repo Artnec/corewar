@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int		lfork(t_list *carry, t_vm *vm)
+int		lfork(t_lst *carry, t_vm *vm)
 {
 	fork_carry(carry, vm, get_short(vm->map, carry->pc));
 	iterate(&carry->pc, 2);
