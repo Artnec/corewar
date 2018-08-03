@@ -17,7 +17,7 @@ int		lld(t_lst *carry, t_vm *vm)
 	int n;
 	int t;
 
-	if (carry->codage == 0xd24)
+	if ((carry->codage & 0x3c) == 0x24)
 	{
 		n = carry->op;
 		iterate(&n, get_short(vm->map, carry->pc) % MEM_SIZE);
@@ -26,7 +26,7 @@ int		lld(t_lst *carry, t_vm *vm)
 		iterate(&carry->pc, 2);
 		carry->registry[vm->map[carry->pc].val - 1] = t;
 	}
-	else if (carry->codage == 0x34)
+	else if ((carry->codage & 0x3c) == 0x34)
 	{
 		n = get_uint(vm->map, carry->pc);
 		iterate(&carry->pc, 4);

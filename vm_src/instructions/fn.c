@@ -65,16 +65,16 @@ void			uint_to_map(unsigned int n, int id, t_map *map, int i)
 		i += MEM_SIZE;  // is needed ?
 	map[i].val = (n & 0xff000000) >> 24;
 	map[i].id = id;
-	map[i].bold = 50;
+	map[i].bold = 49;
 	map[(i + 1) % MEM_SIZE].val = (n & 0x00ff0000) >> 16;
 	map[(i + 1) % MEM_SIZE].id = id;
-	map[(i + 1) % MEM_SIZE].bold = 50;
+	map[(i + 1) % MEM_SIZE].bold = 49;
 	map[(i + 2) % MEM_SIZE].val = (n & 0x0000ff00) >> 8;
 	map[(i + 2) % MEM_SIZE].id = id;
-	map[(i + 2) % MEM_SIZE].bold = 50;
+	map[(i + 2) % MEM_SIZE].bold = 49;
 	map[(i + 3) % MEM_SIZE].val = (n & 0x000000ff);
 	map[(i + 3) % MEM_SIZE].id = id;
-	map[(i + 3) % MEM_SIZE].bold = 50;
+	map[(i + 3) % MEM_SIZE].bold = 49;
 }
 
 void	fork_carry(t_lst *orig_carry, t_vm *vm, int pos)

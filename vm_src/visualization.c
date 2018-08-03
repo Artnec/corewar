@@ -21,11 +21,14 @@ static void		draw_carrys(t_vm *vm)
 	tmp = vm->carry_list_head;
 	while (tmp)
 	{
-		wattron(stdscr, COLOR_PAIR(vm->map[tmp->pc].id + 5));
-		i = tmp->pc / 64 + 2;
-		j = tmp->pc % 64 * 3 + 3;
-		mvwprintw(stdscr, i, j, "%02x", vm->map[tmp->pc].val);
-		wattroff(stdscr, COLOR_PAIR(vm->map[tmp->pc].id + 5));
+		if (vm->map[tmp->pc].live <= 0)
+		{
+			wattron(stdscr, COLOR_PAIR(vm->map[tmp->pc].id + 5));
+			i = tmp->pc / 64 + 2;
+			j = tmp->pc % 64 * 3 + 3;
+			mvwprintw(stdscr, i, j, "%02x", vm->map[tmp->pc].val);
+			wattroff(stdscr, COLOR_PAIR(vm->map[tmp->pc].id + 5));
+		}
 		tmp = tmp->next;
 	}
 }
@@ -47,6 +50,11 @@ void			pause_ncurses(t_vm *vm)
 			vm->fps += (vm->fps == 1000 ? 0 : 1);
 		else if (k == 114)
 			vm->fps = (vm->fps > 990 ? 1000 : vm->fps + 10);
+		else if (k == 115)
+		{
+			vm->s = 1;
+			break ;
+		}
 		else if (k == 32)
 			break ;
 		mvwprintw(stdscr, 4, 221, "%d      ", vm->fps);
@@ -83,6 +91,12 @@ void			key_control(t_vm *vm)
 {
 	int		k;
 
+	if (vm->s == 1)
+	{
+		vm->s = 0;
+		pause_ncurses(vm);
+		return ;
+	}
 	k = getch();
 	if (k == 113)
 		vm->fps = (vm->fps > 10 ? vm->fps - 10 : 1);
@@ -111,13 +125,22 @@ void			draw_ncurses(t_vm *vm)
 		i = 3;
 		while (i < 195)
 		{
-			if (vm->map[j].bold > 0)
+			if (vm->map[j].bold > 0 || vm->map[j].live > 0)
 				wattron(stdscr, A_BOLD);
-			wattron(stdscr, COLOR_PAIR(vm->map[j].id));
+			if (vm->map[j].live > 0)
+				wattron(stdscr, COLOR_PAIR(vm->map[j].live_id + 10));
+			else
+				wattron(stdscr, COLOR_PAIR(vm->map[j].id));
 			mvwprintw(stdscr, n, i, "%02x", vm->map[j].val);
-			if (vm->map[j].bold > 0 && vm->map[j].bold--)
+			if ((vm->map[j].bold > 0 && vm->map[j].bold--) || vm->map[j].live > 0)
 				wattroff(stdscr, A_BOLD);
-			wattroff(stdscr, COLOR_PAIR(vm->map[j++].id));
+			if (vm->map[j].live > 0)
+			{
+				vm->map[j].live--;
+				wattroff(stdscr, COLOR_PAIR(vm->map[j++].live_id + 10));
+			}
+			else
+				wattroff(stdscr, COLOR_PAIR(vm->map[j++].id));
 			i += 3;
 		}
 	}
@@ -160,7 +183,7 @@ void			end_ncurses(t_vm *vm)
 
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 199, "The winner is :");
-	w = get_winner(vm);
+	w = vm->last - 1;// get_winner(vm);
 	wattron(stdscr, COLOR_PAIR(w + 1));
 	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 215, "%.37s", vm->bot[w].name);
 	wattroff(stdscr, COLOR_PAIR(w + 1));
@@ -185,7 +208,8 @@ void			start_ncurses(void)
 	init_pair(100, COLOR_WHITE, COLOR_WHITE);
 	init_pair(50, COLOR_WHITE, COLOR_BLACK);
 	init_pair(0, COLOR_WHITE, COLOR_BLACK);
-	init_pair(5, COLOR_BLACK, COLOR_WHITE);
+	// init_pair(5, COLOR_BLACK, COLOR_WHITE); // differs from orig
+	init_pair(5, COLOR_WHITE, COLOR_WHITE);
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);
 	init_pair(6, COLOR_BLACK, COLOR_GREEN);
 	init_pair(2, COLOR_BLUE, COLOR_BLACK);
@@ -194,6 +218,10 @@ void			start_ncurses(void)
 	init_pair(8, COLOR_BLACK, COLOR_RED);
 	init_pair(4, COLOR_CYAN, COLOR_BLACK);
 	init_pair(9, COLOR_BLACK, COLOR_CYAN);
+	init_pair(11, COLOR_WHITE, COLOR_GREEN);
+	init_pair(12, COLOR_WHITE, COLOR_BLUE);
+	init_pair(13, COLOR_WHITE, COLOR_RED);
+	init_pair(14, COLOR_WHITE, COLOR_CYAN);
 	draw_border();
 	// draw_static_info();
 }

@@ -45,6 +45,8 @@ typedef struct		s_map
 	unsigned char	val;
 	int				id;
 	int				bold;
+	int				live;
+	int				live_id;
 }					t_map;
 
 typedef struct		s_bot
@@ -75,6 +77,8 @@ typedef struct		s_vm
 	int				processes;
 	int				lives_in_cycle;
 	int				fps;
+	int				last;
+	int				s;
 }					t_vm;
 
 typedef struct		s_op
@@ -106,7 +110,7 @@ void				end_ncurses(t_vm *vm);
 // void				pause_ncurses(t_vm *vm);
 // void				draw_info(t_vm *vm);
 void				key_control(t_vm *vm);
-int					get_winner(t_vm *vm);
+// int					get_winner(t_vm *vm);
 
 
 unsigned int		get_uint(t_map *map, int n);

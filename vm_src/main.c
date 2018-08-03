@@ -39,7 +39,7 @@ void	player_introduction(t_vm *vm)
 {
 	write(1, "Introducing contestants...\n", 27);
 	for (int i = 0; i < vm->number_of_bots; i++)
-		printf("* Player %d, weighing %ld bytes, \"%s\" (\"%s\") !\n", i + 1,
+		ft_printf("* Player %d, weighing %ld bytes, \"%s\" (\"%s\") !\n", i + 1,
 			vm->bot[i].size, vm->bot[i].name, vm->bot[i].comment);
 }
 
@@ -94,6 +94,14 @@ void	initiate_carrys_and_map(t_vm *vm)
 	vm->carry_list_head = NULL;
 	i = -1;
 	vm->processes = vm->number_of_bots;
+	n = -1;
+	while (++n < MEM_SIZE)
+	{
+		vm->map[n].val = 0;
+		vm->map[n].id = 0;
+		vm->map[n].bold = 0;
+		vm->map[n].live = 0;
+	}
 	while (++i < vm->number_of_bots)
 	{
 		vm->carry_list_head = add_list_head(vm->carry_list_head);
@@ -112,6 +120,8 @@ void	initiate_carrys_and_map(t_vm *vm)
 		{
 			vm->map[vm->carry_list_head->pc + n].val = vm->bot[i].bot[n];
 			vm->map[vm->carry_list_head->pc + n].id = i + 1;
+			vm->map[vm->carry_list_head->pc + n].bold = 0;
+			vm->map[vm->carry_list_head->pc + n].live = 0;
 		}
 	}
 }
@@ -137,6 +147,8 @@ int		check_opcode_with_codage(int op, int p, t_lst *carry, t_vm *vm)
 		{
 			if ((g_op_tab[op].args[i] & T_DIR) == 0)
 				error = 1;
+			// if (vm->cycle == 4)
+			// 	printf("%d\n", g_op_tab[op].label_size == 1 ? 2 : 4);
 			iterate(&p, g_op_tab[op].label_size == 1 ? 2 : 4);
 		}
 		else if (c == IND_CODE)
@@ -241,13 +253,6 @@ void	run_cycle(t_vm *vm)
 		delete_dead_processes(vm->carry_list_head, NULL, vm);
 	while (carry && (int)vm->cycle_to_die > 0)
 	{
-		// if (vm->cycle == 4381)
-		// {
-		// 	printf("%d: ", carry->pc);
-		// 	for (int i = 0; i < 16; i++)
-		// 		printf("%d ", carry->registry[i]);
-		// 	printf("\n");
-		// }
 		if (carry->opcode == -1 && IS_VALID_OPCODE(vm->map[carry->pc].val))
 		{
 			carry->opcode = vm->map[carry->pc].val - 1;
@@ -310,8 +315,8 @@ void	corewar(t_vm *vm)
 		else
 			run_cycle(vm);
 	}
-	int w = get_winner(vm);
-	printf("Contestant %d, \"%s\", has won !\n", w + 1, vm->bot[w].name);
+	int w = vm->last - 1;// get_winner(vm);
+	ft_printf("Contestant %d, \"%s\", has won !\n", w + 1, vm->bot[w].name);
 }
 
 void	initiate_structure(t_vm *vm)
@@ -346,33 +351,35 @@ void	initiate_structure(t_vm *vm)
 	vm->fps = 50;
 	vm->cycle = 0;
 	vm->cycle_alive = 0;
+	vm->s = 0;
 }
 
-int		get_winner(t_vm *vm)
-{
-	int i;
-	int m;
-	int b;
+// int		get_winner(t_vm *vm)
+// {
+// 	int i;
+// 	int m;
+// 	int b;
 
-	m = -1;
-	i = vm->number_of_bots;
-	while (--i >= 0)
-	{
-		if (vm->bot[i].last_live > m)
-		{
-			m = vm->bot[i].last_live;
-			b = i;
-		}
-	}
-	i = -1;
-	while (++i < vm->number_of_bots)
-	{
-		if (!ft_strcmp(vm->bot[i].name, vm->bot[b].name) &&
-			vm->bot[i].last_live == vm->bot[b].last_live) // !!!!!!!!!!!!!!!!!!!!!!! STRCMP -> FT_STRCMP !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -42
-			return (i);
-	}
-	return (b);
-}
+// 	m = -1;
+// 	i = vm->number_of_bots;
+// 	while (--i >= 0)
+// 	{
+// 		if (vm->bot[i].last_live > m)
+// 		{
+// 			m = vm->bot[i].last_live;
+// 			b = i;
+// 		}
+// 	}
+
+// 	// i = -1;
+// 	// while (++i < vm->number_of_bots)
+// 	// {
+// 	// 	if (!ft_strcmp(vm->bot[i].name, vm->bot[b].name) &&
+// 	// 		vm->bot[i].last_live == vm->bot[b].last_live)
+// 	// 		return (i);
+// 	// }
+// 	return (b);
+// }
 
 int		main(int argc, char **argv)
 {
@@ -386,10 +393,11 @@ int		main(int argc, char **argv)
 		return (0);
 	}
 	parse_arguments(argc, argv, &vm);
-	// printf("dump: %d\nv: %d\n", vm.dump, vm.v);
+	// ft_printf("dump: %d\nv: %d\n", vm.dump, vm.v);
 	read_cor_files(&vm);
 	if (vm.v != 1)
 		player_introduction(&vm);
+	vm.last = vm.number_of_bots;
 	initiate_carrys_and_map(&vm);
 	corewar(&vm);
 	// system("say  -r 170 bot 2, won");
