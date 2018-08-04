@@ -57,13 +57,16 @@ void			translate_all_files_in_directory(char *dir_name, t_asm *s)
 	struct dirent	*entry;
 	char			name[512];
 	DIR				*dir;
+	int				len;
 
 	dir = opendir(dir_name);
 	if (dir == NULL)
 		exit_error("Error: bad directory name\n");
 	while ((entry = readdir(dir)))
 	{
-		if (entry->d_name[0] == '.')
+		len = str_len(entry->d_name);
+		if (entry->d_name[0] == '.' || len < 3 || entry->d_name[len - 1] != 's'
+			|| entry->d_name[len - 2] != '.')
 			continue ;
 		initiate_structure(s);
 		get_file_dir_slash_filename(dir_name, entry->d_name, name);

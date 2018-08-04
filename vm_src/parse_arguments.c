@@ -96,8 +96,8 @@ void			parse_arguments(int argc, char **argv, t_vm *vm)
 	vm->number_of_bots = 0;
 	while (++i < argc)
 	{
-		if (vm->number_of_bots == 4)
-			exit_error("maximum allowed number of bots is 4\n");
+		if (vm->number_of_bots == MAX_PLAYERS)
+			exit_error("too many players\n");
 		if (str_compare(argv[i], "-n") &&
 			(a[vm->number_of_bots] = get_bot_order(argv[i + 1])))
 			i += 2;

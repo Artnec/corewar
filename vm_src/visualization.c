@@ -37,7 +37,7 @@ void			pause_ncurses(t_vm *vm)
 {
 	int		k;
 
-	// mvwprintw(stdscr, 40, 199, "%d", getch());
+	mvwprintw(stdscr, 40, 199, "%d", getch());
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 2, 199, "** PAUSED  **");
 	while ((k = getch()))
@@ -106,6 +106,11 @@ void			key_control(t_vm *vm)
 		vm->fps += (vm->fps < 1000 ? 1 : 0);
 	else if (k == 114)
 		vm->fps = (vm->fps < 990 ? vm->fps + 10 : 1000);
+	else if (k == 27)
+    {
+        vm->v = 0;
+        endwin();
+    }
 	else if (k == 32)
 		pause_ncurses(vm);
 }
@@ -118,12 +123,10 @@ void			draw_ncurses(t_vm *vm)
 
 	j = 0;
 	n = 1;
-	// if (getch() == 32)
-	// 	pause_ncurses(vm);
-	while (++n < 66)
+	while (++n < MEM_SIZE / 64 + 3 && (n - 2) * 64 != MEM_SIZE)
 	{
 		i = 3;
-		while (i < 195)
+		while (i < 195 && ((n - 2) * 64 + (i / 3)) <= MEM_SIZE)
 		{
 			if (vm->map[j].bold > 0 || vm->map[j].live > 0)
 				wattron(stdscr, A_BOLD);
@@ -149,7 +152,6 @@ void			draw_ncurses(t_vm *vm)
 	wrefresh(stdscr);
 	if (vm->cycle == 0)
 		pause_ncurses(vm);
-	// usleep(20000);
 }
 
 static void		draw_border(void)
@@ -183,7 +185,7 @@ void			end_ncurses(t_vm *vm)
 
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 199, "The winner is :");
-	w = vm->last - 1;// get_winner(vm);
+	w = vm->last - 1;
 	wattron(stdscr, COLOR_PAIR(w + 1));
 	mvwprintw(stdscr, 25 + vm->number_of_bots * 4, 215, "%.37s", vm->bot[w].name);
 	wattroff(stdscr, COLOR_PAIR(w + 1));
@@ -208,8 +210,7 @@ void			start_ncurses(void)
 	init_pair(100, COLOR_WHITE, COLOR_WHITE);
 	init_pair(50, COLOR_WHITE, COLOR_BLACK);
 	init_pair(0, COLOR_WHITE, COLOR_BLACK);
-	init_pair(5, COLOR_BLACK, COLOR_WHITE); // differs from orig
-	// init_pair(5, COLOR_WHITE, COLOR_WHITE);
+	init_pair(5, COLOR_BLACK, COLOR_WHITE);
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);
 	init_pair(6, COLOR_BLACK, COLOR_GREEN);
 	init_pair(2, COLOR_BLUE, COLOR_BLACK);

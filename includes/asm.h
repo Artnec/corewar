@@ -20,10 +20,9 @@
 # include <dirent.h>
 # include <sys/types.h>
 
-// # include <stdio.h>
+# define COMMENT					';'
+# define CORE_CHAMP_MAX_SIZE		2048
 
-#define COMMENT					';'
-#define CORE_CHAMP_MAX_SIZE		2048
 
 typedef struct		s_list
 {

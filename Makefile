@@ -14,7 +14,8 @@ VM				=	corewar
 ASM				=	asm
 
 VM_SRC			=	main.c		change_bot_order.c	parse_arguments.c \
-					visualization.c		read_cor_files.c	op.c
+					visualization.c		read_cor_files.c	op.c \
+					check_codage_and_regs.c	run_cycle.c
 
 VM_INS_SRC		=	live.c	ld.c	st.c	add.c	sub.c	and.c	or.c \
 					xor.c	zjmp.c	ldi.c	sti.c	fork.c	lld.c	lldi.c \
@@ -46,8 +47,8 @@ VM_INS_SRC_DIR	=	./vm_src/instructions/
 ASM_SRC_DIR		=	./asm_src/
 VM_OBJ_DIR		=	./vm_obj/
 ASM_OBJ_DIR		=	./asm_obj/
-INC_DIR			=	./includes/
 PRINTF_DIR		=	./vm_src/printf/
+INC_DIR			=	./includes/
 INC				=	asm.h	corewar.h	op.h
 
 NC				=	\033[0m
@@ -71,7 +72,7 @@ $(VM): $(VM_OBJ) $(VM_INS_OBJ) $(VM_PRINT_OBJ)
 	@$(CC) $(FLAGS) $(NCURSES_FLAG) -o $(VM) $(VM_OBJ) $(VM_INS_OBJ) $(VM_PRINT_OBJ)
 	@echo "${BLUE}Done!${NC}"
 
-$(ASM_OBJ_DIR)%.o: $(ASM_SRC_DIR)%.c
+$(ASM_OBJ_DIR)%.o: $(ASM_SRC_DIR)%.c $(INC_FILES)
 	@mkdir -p $(ASM_OBJ_DIR)
 	@$(CC) $(FLAGS) -I $(INC_DIR) -o $@ -c $<
 

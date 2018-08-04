@@ -101,6 +101,8 @@ int					ft_printf(const char *fmt, ...);
 void				parse_arguments(int argc, char **argv, t_vm *vm);
 void				read_cor_files(t_vm *vm);
 void				change_bot_order(int *a, t_vm *vm);
+int					check_codage_and_regs(t_lst *carry, t_vm *vm);
+void				run_cycle(t_vm *vm);
 void				exit_error(char *error_message);
 
 
@@ -110,7 +112,6 @@ void				end_ncurses(t_vm *vm);
 // void				pause_ncurses(t_vm *vm);
 // void				draw_info(t_vm *vm);
 void				key_control(t_vm *vm);
-// int					get_winner(t_vm *vm);
 
 
 unsigned int		get_uint(t_map *map, int n);

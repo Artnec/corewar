@@ -15,26 +15,27 @@ int		find_diference(char *comand1, char *comand2)
 
 	int size = fread(output1, 1, 32768, fp1);
 	pclose(fp1);
-	fread(output2, 1, 32768, fp2);
+	int size2 = fread(output2, 1, 32768, fp2);
 	pclose(fp2);
-	int t = 0;
-	for (int i = 0; i < size; ++i)
-	{
-		if (t == 0 && output1[i] != output2[i])
-		{
-			i = 0;
-			t = 1;
-		}
-		if (t == 1)
-		{
-			if (output1[i] != output2[i])
-				printf("\033[1;31m");
-			printf("%c", output1[i]);
-			if (output1[i] != output2[i])
-				printf("\033[0m");
-		}
-	}
-	return (t);
+	return (size != size2 || strcmp(output1, output2));
+	// int t = 0;
+	// for (int i = 0; i < size; ++i)
+	// {
+	// 	if (t == 0 && output1[i] != output2[i])
+	// 	{
+	// 		i = 0;
+	// 		t = 1;
+	// 	}
+	// 	if (t == 1)
+	// 	{
+	// 		if (output1[i] != output2[i])
+	// 			printf("\033[1;31m");
+	// 		printf("%c", output1[i]);
+	// 		if (output1[i] != output2[i])
+	// 			printf("\033[0m");
+	// 	}
+	// }
+	// return (t);
 }
 
 int		comapare_one_bot(int cycle, string a)
@@ -114,11 +115,15 @@ int		main(int argc, char **argv)
 		{
 			if (comapare_one_bot(cycle, *n) == 1)
 			{
-				printf("%30s \033[0;31m ERROR \033[0m\n", cs1);
+				printf("%-30s ERROR\n", cs1);
+				// printf("%-30s \033[0;31m ERROR \033[0m\n", cs1);
 				// return 0;
 			}
 			else
-				printf("%30s \033[0;32m OK \033[0m\n", cs1);
+			{
+				printf("%-30s OK\n", cs1);
+				// printf("%-30s \033[0;32m OK \033[0m\n", cs1);
+			}
 		}
 		else
 		{
@@ -130,11 +135,15 @@ int		main(int argc, char **argv)
 				{
 					if (comapare_two_bots(cycle, *n, *i) == 1)
 					{
-						printf("%30s %30s \033[0;31m ERROR \033[0m\n", cs1, cs2);
+						printf("%-30s %-30s ERROR\n", cs1, cs2);
+						// printf("%-30s %-30s \033[0;31m ERROR \033[0m\n", cs1, cs2);
 						// return 0;
 					}
 					else
-						printf("%30s %30s \033[0;32m OK \033[0m\n", cs1, cs2);
+					{
+						printf("%-30s %-30s OK\n", cs1, cs2);
+						// printf("%-30s %-30s \033[0;32m OK \033[0m\n", cs1, cs2);
+					}
 				}
 				else
 				{
@@ -146,11 +155,15 @@ int		main(int argc, char **argv)
 						{
 							if (comapare_three_bots(cycle, *n, *i, *j) == 1)
 							{
-								printf("%30s %30s %30s\033[0;31m ERROR \033[0m\n", cs1, cs2, cs3);
+								printf("%-30s %-30s %-30s ERROR\n", cs1, cs2, cs3);
+								// printf("%-30s %-30s %-30s\033[0;31m ERROR \033[0m\n", cs1, cs2, cs3);
 								// return 0;
 							}
 							else
-								printf("%30s %30s %30s\033[0;32m OK \033[0m\n", cs1, cs2, cs3);
+							{
+								printf("%-30s %-30s %-30s OK\n", cs1, cs2, cs3);
+								// printf("%-30s %-30s %-30s\033[0;32m OK \033[0m\n", cs1, cs2, cs3);
+							}
 						}
 						else
 						{
@@ -160,11 +173,15 @@ int		main(int argc, char **argv)
 								const char *cs4 = s4.erase(0, len).c_str();
 								if (comapare_four_bots(cycle, *n, *i, *j, *k) == 1)
 								{
-									printf("%30s %30s %30s %30s\033[0;31m ERROR \033[0m\n", cs1, cs2, cs3, cs4);
+									printf("%-30s %-30s %-30s %-30s ERROR\n", cs1, cs2, cs3, cs4);
+									// printf("%-30s %-30s %-30s %-30s\033[0;31m ERROR \033[0m\n", cs1, cs2, cs3, cs4);
 									// return 0;
 								}
 								else
-									printf("%30s %30s %30s %30s\033[0;32m OK \033[0m\n", cs1, cs2, cs3, cs4);
+								{
+									printf("%-30s %-30s %-30s %-30s OK\n", cs1, cs2, cs3, cs4);
+									// printf("%-30s %-30s %-30s %-30s\033[0;32m OK \033[0m\n", cs1, cs2, cs3, cs4);
+								}
 							}
 						}
 					}
