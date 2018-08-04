@@ -19,11 +19,9 @@
 # include <fcntl.h>
 # include <ncurses.h>
 # include <time.h>
-# include "../libft/include/libft.h"
 
 # define REG_CHECK(x)		(x < 1 || x > REG_NUMBER)
 # define IS_VALID_OPCODE(x)	(x > 0 && x < 17)
-# define ITE(x, y)			(x + y < 0 ? MEM_SIZE + (x + y) % MEM_SIZE : (x + y) % MEM_SIZE)
 
 
 typedef struct		s_lst
@@ -97,6 +95,8 @@ typedef struct		s_op
 **					op.c
 */
 extern t_op			g_op_tab[17];
+
+int					ft_printf(const char *fmt, ...);
 
 void				parse_arguments(int argc, char **argv, t_vm *vm);
 void				read_cor_files(t_vm *vm);

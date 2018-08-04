@@ -294,7 +294,7 @@ void	corewar(t_vm *vm)
 		if (vm->v == 1)
 		{
 			key_control(vm);
-			if ((int)(t1 * vm->fps / CLOCKS_PER_SEC) < (int)(t2 * vm->fps / CLOCKS_PER_SEC))
+			if ((int)(t1 * vm->fps / CLOCKS_PER_SEC) < (int)(t2 * vm->fps / CLOCKS_PER_SEC) || vm->s == 1)
 			{
 				t1 = clock();
 				run_cycle(vm);
