@@ -12,6 +12,7 @@
 
 VM				=	corewar
 ASM				=	asm
+CMP				=	cmp
 
 VM_SRC			=	main.c		change_bot_order.c	parse_arguments.c \
 					visualization.c		read_cor_files.c	op.c \
@@ -31,6 +32,8 @@ ASM_SRC			=	main.c		op.c	get_labels_and_opcodes.c \
 					translate_all_files_in_directory.c	reverse.c \
 					write_arguments.c
 
+CMP_SRC			=	cmp.cpp
+
 CC				=	gcc
 FLAGS			=	-Wall -Werror -Wextra
 NCURSES_FLAG	=	-lncurses
@@ -40,6 +43,7 @@ VM_OBJ			=	$(addprefix $(VM_OBJ_DIR), $(VM_SRC:.c=.o))
 VM_INS_OBJ		=	$(addprefix $(VM_OBJ_DIR), $(VM_INS_SRC:.c=.o))
 VM_PRINT_OBJ	=	$(addprefix $(VM_OBJ_DIR), $(PRINTF_SRC:.c=.o))
 ASM_OBJ			=	$(addprefix $(ASM_OBJ_DIR), $(ASM_SRC:.c=.o))
+CMP_OBJ			=	$(addprefix $(CMP_DIR), $(CMP_SRC:.cpp=.o))
 INC_FILES		=	$(addprefix $(INC_DIR), $(INC))
 
 VM_SRC_DIR		=	./vm_src/
@@ -48,6 +52,7 @@ ASM_SRC_DIR		=	./asm_src/
 VM_OBJ_DIR		=	./vm_obj/
 ASM_OBJ_DIR		=	./asm_obj/
 PRINTF_DIR		=	./vm_src/printf/
+CMP_DIR			=	./cmp_src/
 INC_DIR			=	./includes/
 INC				=	asm.h	corewar.h	op.h
 
@@ -81,13 +86,21 @@ $(ASM): $(ASM_OBJ)
 	@$(CC) $(FLAGS) -o $(ASM) $(ASM_OBJ)
 	@echo "${BLUE}Done!${NC}"
 
+$(CMP_DIR)%.o: $(CMP_DIR)%.cpp
+	@clang++ $(FLAGS) -std=c++11 -o3 -ofast -o $@ -c $<
+
+$(CMP): $(CMP_OBJ)
+	@echo "${BLUE}Compiling $(CMP) with $(FLAGS) flags${NC}\n..."
+	@clang++ $(FLAGS) -o $(CMP) $(CMP_OBJ)
+	@echo "${BLUE}Done!${NC}"
+
 clean:
-	@rm -rf $(VM_OBJ_DIR) $(ASM_OBJ_DIR) $(VM_PRINT_OBJ)
-	@echo  "${RED}$(VM_OBJ_DIR), $(VM_PRINT_OBJ) and $(ASM_OBJ_DIR) has been removed.${NC}"
+	@rm -rf $(VM_OBJ_DIR) $(ASM_OBJ_DIR) $(CMP_OBJ)
+	@echo  "${RED}$(VM_OBJ_DIR), $(ASM_OBJ_DIR) and $(CMP_OBJ) has been removed.${NC}"
 
 fclean: clean
-	@rm -rf $(VM) $(ASM)
-	@echo "${RED}$(VM) and $(ASM) has been removed.${NC}"
+	@rm -rf $(VM) $(ASM) $(CMP)
+	@echo "${RED}$(VM) $(ASM) and $(CMP) has been removed.${NC}"
 
 re: fclean all
 
