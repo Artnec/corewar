@@ -21,6 +21,8 @@ static void		draw_carrys(t_vm *vm)
 	tmp = vm->carry_list_head;
 	while (tmp)
 	{
+		if (vm->map[tmp->pc].bold > 0)
+			wattron(stdscr, A_BOLD);
 		if (vm->map[tmp->pc].live <= 0)
 		{
 			wattron(stdscr, COLOR_PAIR(vm->map[tmp->pc].id + 5));
@@ -29,6 +31,8 @@ static void		draw_carrys(t_vm *vm)
 			mvwprintw(stdscr, i, j, "%02x", vm->map[tmp->pc].val);
 			wattroff(stdscr, COLOR_PAIR(vm->map[tmp->pc].id + 5));
 		}
+		if (vm->map[tmp->pc].bold > 0)
+			wattroff(stdscr, A_BOLD);
 		tmp = tmp->next;
 	}
 }
