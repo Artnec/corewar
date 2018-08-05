@@ -37,7 +37,7 @@ void			pause_ncurses(t_vm *vm)
 {
 	int		k;
 
-	mvwprintw(stdscr, 40, 199, "%d", getch());
+	// mvwprintw(stdscr, 40, 199, "%d", getch());
 	wattron(stdscr, A_BOLD | COLOR_PAIR(50));
 	mvwprintw(stdscr, 2, 199, "** PAUSED  **");
 	while ((k = getch()))
@@ -150,7 +150,7 @@ void			draw_ncurses(t_vm *vm)
 	draw_carrys(vm);
 	draw_info(vm);
 	wrefresh(stdscr);
-	if (vm->cycle == 0)
+	if (vm->cycle == vm->cycle_to_start)
 		pause_ncurses(vm);
 }
 

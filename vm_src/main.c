@@ -122,16 +122,17 @@ void	corewar(t_vm *vm)
 
 	t1 = clock();
 	t2 = clock() * CLOCKS_PER_SEC;
-	if (vm->v == 1)
-		start_ncurses();
 	while (vm->processes > 0)
 	{
+		// printf("%d, %d\n", vm->cycle, vm->cycle_to_start);
+		if (vm->cycle == vm->cycle_to_start && vm->v == 1)
+			start_ncurses();
 		if (vm->dump == vm->cycle)
 		{
 			dump_memory(vm);
 			return ;
 		}
-		if (vm->v == 1)
+		if (vm->cycle >= vm->cycle_to_start && vm->v == 1)
 		{
 			key_control(vm);
 			if ((int)(t1 * vm->fps / CLOCKS_PER_SEC) < (int)(t2 * vm->fps / CLOCKS_PER_SEC) || vm->s == 1)
@@ -155,7 +156,15 @@ void	corewar(t_vm *vm)
 		else
 			run_cycle(vm);
 	}
-	ft_printf("Contestant %d, \"%s\", has won !\n", vm->last, vm->bot[vm->last - 1].name);
+	if (vm->v == 1)
+	{
+		start_ncurses();
+		draw_ncurses(vm);
+		pause_ncurses(vm);
+		end_ncurses(vm);
+	}
+	else
+		ft_printf("Contestant %d, \"%s\", has won !\n", vm->last, vm->bot[vm->last - 1].name);
 }
 
 void	initiate_structure(t_vm *vm)

@@ -69,6 +69,7 @@ typedef struct		s_vm
 	t_map			map[MEM_SIZE];
 	int				(*functions[16])(t_lst *carry, struct s_vm *);
 	int				cycle;
+	int				cycle_to_start;
 	unsigned int	cycle_alive;
 	unsigned int	cycle_to_die;
 	int				checks_count;
@@ -109,7 +110,7 @@ void				exit_error(char *error_message);
 void				draw_ncurses(t_vm *vm);
 void				start_ncurses(void);
 void				end_ncurses(t_vm *vm);
-// void				pause_ncurses(t_vm *vm);
+void				pause_ncurses(t_vm *vm);
 // void				draw_info(t_vm *vm);
 void				key_control(t_vm *vm);
 

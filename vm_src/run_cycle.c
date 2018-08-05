@@ -92,7 +92,7 @@ void			run_cycle(t_vm *vm)
 	t_lst	*carry;
 
 	carry = vm->carry_list_head;
-	if (vm->v == 1)
+	if (vm->v == 1 && vm->cycle >= vm->cycle_to_start)
 		draw_ncurses(vm);
 	if ((int)vm->cycle_to_die <= 0)
 		delete_dead_processes(vm->carry_list_head, NULL, vm);
