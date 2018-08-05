@@ -18,7 +18,8 @@ unsigned int	get_uint(t_map *map, int n)
 		return (map[n].val << 24 | map[(n + 1) % MEM_SIZE].val << 16 |
 			map[(n + 2) % MEM_SIZE].val << 8 | map[(n + 3) % MEM_SIZE].val);
 	}
-	return (map[n].val << 24 | map[n + 1].val << 16 | map[n + 2].val << 8 | map[n + 3].val);
+	return (map[n].val << 24 | map[n + 1].val << 16 |
+		map[n + 2].val << 8 | map[n + 3].val);
 }
 
 short			get_short(t_map *map, int n)
@@ -32,37 +33,32 @@ int				get_rdi_val(t_lst *carry, int t_rdi, int d, t_vm *vm)
 
 	if (t_rdi == REG_CODE)
 	{
-		// printf("T_REG\n");
 		num = carry->registry[vm->map[carry->pc].val - 1];
-		// printf("reg: %d\n", num);
 		iterate(&carry->pc, 1);
 		return (num);
 	}
 	if (t_rdi == DIR_CODE)
 	{
-		// printf("T_DIR\n");
-		num = d == 2 ? (short)get_short(vm->map, carry->pc) : get_uint(vm->map, carry->pc);
-		// printf("dir: %d\n", num);
+		num = d == 2 ? (short)get_short(vm->map, carry->pc) :
+			get_uint(vm->map, carry->pc);
 		iterate(&carry->pc, d);
 		return (num);
 	}
 	if (t_rdi == IND_CODE)
 	{
-		// printf("T_IND\n");
-		num = get_uint(vm->map, carry->op + get_short(vm->map, carry->pc) % IDX_MOD);
-		// printf("ind: %d\n", num);
+		num = get_uint(vm->map, carry->op +
+			get_short(vm->map, carry->pc) % IDX_MOD);
 		iterate(&carry->pc, 2);
 		return (num);
 	}
-	// error ???
 	return (0);
 }
 
 void			uint_to_map(unsigned int n, int id, t_vm *vm, int i)
 {
-	i %= MEM_SIZE;  // is needed ?
+	i %= MEM_SIZE;
 	if (i < 0)
-		i += MEM_SIZE;  // is needed ?
+		i += MEM_SIZE;
 	vm->map[i].val = (n & 0xff000000) >> 24;
 	vm->map[i].id = id;
 	vm->map[(i + 1) % MEM_SIZE].val = (n & 0x00ff0000) >> 16;
@@ -83,7 +79,7 @@ void			uint_to_map(unsigned int n, int id, t_vm *vm, int i)
 		vm->map[i].bold = vm->cycle - vm->cycle_to_start + 50;
 		vm->map[(i + 1) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;
 		vm->map[(i + 2) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;
-		vm->map[(i + 3) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;		
+		vm->map[(i + 3) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;	
 	}
 }
 

@@ -18,7 +18,8 @@ int		lldi(t_lst *carry, t_vm *vm)
 	int n;
 
 	j = carry->codage >> 2;
-	n = ((int)get_rdi_val(carry, j >> 2, 2, vm) + (int)get_rdi_val(carry, j & 3, 2, vm));
+	n = ((int)get_rdi_val(carry, j >> 2, 2, vm) +
+		(int)get_rdi_val(carry, j & 3, 2, vm));
 	j = carry->op;
 	iterate(&j, n);
 	n = get_uint(vm->map, j);

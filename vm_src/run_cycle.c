@@ -54,6 +54,20 @@ void			check_bot_alive(t_vm *vm)
 	}
 }
 
+void			change_cycle_to_die(t_vm *vm)
+{
+	if (vm->checks_count == MAX_CHECKS)
+	{
+		vm->cycle_to_die -= CYCLE_DELTA;
+		vm->checks_count = 0;
+	}
+	else if (vm->lives_in_cycle >= NBR_LIVE)
+	{
+		vm->cycle_to_die -= CYCLE_DELTA;
+		vm->checks_count = 0;
+	}
+}
+
 static void		check_processes(t_vm *vm)
 {
 	int		i;
@@ -70,16 +84,7 @@ static void		check_processes(t_vm *vm)
 		carry->alive = 0;
 		carry = carry->next;
 	}
-	if (vm->checks_count == MAX_CHECKS)
-	{
-		vm->cycle_to_die -= CYCLE_DELTA;
-		vm->checks_count = 0;
-	}
-	else if (vm->lives_in_cycle >= NBR_LIVE)
-	{
-		vm->cycle_to_die -= CYCLE_DELTA;
-		vm->checks_count = 0;
-	}
+	change_cycle_to_die(vm);
 	vm->lives_in_cycle = 0;
 	i = 0;
 	while (i < vm->number_of_bots)
@@ -114,23 +119,6 @@ void			run_cycle(t_vm *vm)
 		draw_ncurses(vm);
 	if ((int)vm->cycle_to_die <= 0)
 		delete_dead_processes(vm->carry_list_head, NULL, vm);
-
-
-	// if (vm->cycle == 4784 || vm->cycle == 4785)
-	// {
-	// 	while (carry)
-	// 	{
-	// 		ft_printf("%d: ", carry->pc);
-	// 		for (int i = 0; i < REG_NUMBER; ++i)
-	// 			ft_printf("%d ", carry->registry[i]);
-	// 		ft_printf("\n");
-	// 		carry = carry->next;
-	// 	}
-	// 	ft_printf("\n");
-	// }
-	// carry = vm->carry_list_head;
-
-
 	while (carry && (int)vm->cycle_to_die > 0)
 	{
 		cycle_loop(carry, vm);

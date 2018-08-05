@@ -15,7 +15,10 @@
 int		zjmp(t_lst *carry, t_vm *vm)
 {
 	if (carry->carry == 1)
-		carry->pc = iterate(&carry->op, get_short(vm->map, carry->pc) % IDX_MOD);
+	{
+		carry->pc =
+			iterate(&carry->op, get_short(vm->map, carry->pc) % IDX_MOD);
+	}
 	else
 		iterate(&carry->pc, 2);
 	return (0);

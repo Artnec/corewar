@@ -97,12 +97,10 @@ int				get_cycle_to_start(char *str)
 	return (num);
 }
 
-void			parse_arguments(int argc, char **argv, t_vm *vm)
+void			parse_arguments(int argc, char **argv, t_vm *vm, int i)
 {
-	int i;
 	int a[4];
 
-	i = -1;
 	while (++i < 4)
 		a[i] = 0;
 	i = 0;
@@ -116,7 +114,6 @@ void			parse_arguments(int argc, char **argv, t_vm *vm)
 		vm->dump = get_numer_of_cycles_before_dump(argv[2]);
 		i += 2;
 	}
-	vm->number_of_bots = 0;
 	while (++i < argc)
 	{
 		if (vm->number_of_bots == MAX_PLAYERS)

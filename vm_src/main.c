@@ -85,12 +85,8 @@ t_lst	*add_list_head(t_lst *list_head)
 	return (list);
 }
 
-void	initiate_carrys_and_map(t_vm *vm)
+void	initiate_carrys_and_map(t_vm *vm, int i, int n)
 {
-	int i;
-	int n;
-
-	i = -1;
 	while (++i < vm->number_of_bots)
 	{
 		vm->carry_list_head = add_list_head(vm->carry_list_head);
@@ -115,6 +111,44 @@ void	initiate_carrys_and_map(t_vm *vm)
 	vm->processes = vm->number_of_bots;
 }
 
+void	finish_him(t_vm *vm)
+{
+	if (vm->v == 1 && vm->cycle <= vm->cycle_to_start)
+	{
+		start_ncurses();
+		draw_ncurses(vm);
+		pause_ncurses(vm);
+		end_ncurses(vm);
+	}
+	else
+		ft_printf("Contestant %d, \"%s\", has won !\n",
+			vm->last, vm->bot[vm->last - 1].name);
+}
+
+void	play_with_visualizator(t_vm *vm, clock_t *t1, clock_t *t2)
+{
+	key_control(vm);
+	if ((int)(*t1 * vm->fps / CLOCKS_PER_SEC) <
+		(int)(*t2 * vm->fps / CLOCKS_PER_SEC) || vm->s == 1)
+	{
+		*t1 = clock();
+		run_cycle(vm);
+		if (vm->processes == 0 )
+		{
+			while ((int)(*t1 * vm->fps / CLOCKS_PER_SEC) >=
+				(int)(*t2 * vm->fps / CLOCKS_PER_SEC))
+			{
+				key_control(vm);
+				*t2 = clock();
+			}
+			draw_ncurses(vm);
+			end_ncurses(vm);
+			return ;
+		}
+	}
+	*t2 = clock();
+}
+
 void	corewar(t_vm *vm)
 {
 	clock_t		t1;
@@ -124,7 +158,6 @@ void	corewar(t_vm *vm)
 	t2 = clock() * CLOCKS_PER_SEC;
 	while (vm->processes > 0)
 	{
-		// printf("%d, %d\n", vm->cycle, vm->cycle_to_start);
 		if (vm->cycle == vm->cycle_to_start && vm->v == 1)
 			start_ncurses();
 		if (vm->dump == vm->cycle)
@@ -133,38 +166,11 @@ void	corewar(t_vm *vm)
 			return ;
 		}
 		if (vm->cycle >= vm->cycle_to_start && vm->v == 1)
-		{
-			key_control(vm);
-			if ((int)(t1 * vm->fps / CLOCKS_PER_SEC) < (int)(t2 * vm->fps / CLOCKS_PER_SEC) || vm->s == 1)
-			{
-				t1 = clock();
-				run_cycle(vm);
-				if (vm->processes == 0 )
-				{
-					while ((int)(t1 * vm->fps / CLOCKS_PER_SEC) >= (int)(t2 * vm->fps / CLOCKS_PER_SEC))
-					{
-						key_control(vm);
-						t2 = clock();
-					}
-					draw_ncurses(vm);
-					end_ncurses(vm);
-					return ;
-				}
-			}
-			t2 = clock();
-		}
+			play_with_visualizator(vm, &t1, &t2);
 		else
 			run_cycle(vm);
 	}
-	if (vm->v == 1)
-	{
-		start_ncurses();
-		draw_ncurses(vm);
-		pause_ncurses(vm);
-		end_ncurses(vm);
-	}
-	else
-		ft_printf("Contestant %d, \"%s\", has won !\n", vm->last, vm->bot[vm->last - 1].name);
+	finish_him(vm);
 }
 
 void	initiate_structure(t_vm *vm)
@@ -201,7 +207,7 @@ int		main(int argc, char **argv)
 		show_usage();
 		return (0);
 	}
-	parse_arguments(argc, argv, &vm);
+	parse_arguments(argc, argv, &vm, -1);
 	if (vm.number_of_bots == 0)
     {
         show_usage();
@@ -209,13 +215,11 @@ int		main(int argc, char **argv)
     }
     if (vm.v == 1 && MEM_SIZE > 4096)
 		exit_error("map is too big to be displayed\n");
-	// ft_printf("dump: %d\nv: %d\n", vm.dump, vm.v);
 	read_cor_files(&vm);
 	if (vm.v != 1)
 		player_introduction(&vm);
 	vm.last = vm.number_of_bots;
-	initiate_carrys_and_map(&vm);
+	initiate_carrys_and_map(&vm, -1, 0);
 	corewar(&vm);
-	// system("say  -r 170 bot 2, won");
 	return (0);
 }

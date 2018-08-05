@@ -19,8 +19,6 @@ int		lld(t_lst *carry, t_vm *vm)
 
 	if ((carry->codage & 0x3c) == 0x34)
 	{
-		// if (vm->cycle == 4725)
-		// 	ft_printf("HERE\n");
 		n = carry->op;
 		iterate(&n, (short)get_short(vm->map, carry->pc) % MEM_SIZE);
 		t = get_uint(vm->map, n);

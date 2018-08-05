@@ -100,7 +100,7 @@ extern t_op			g_op_tab[17];
 
 int					ft_printf(const char *fmt, ...);
 
-void				parse_arguments(int argc, char **argv, t_vm *vm);
+void				parse_arguments(int argc, char **argv, t_vm *vm, int i);
 void				read_cor_files(t_vm *vm);
 void				change_bot_order(int *a, t_vm *vm);
 int					check_codage_and_regs(t_lst *carry, t_vm *vm);

@@ -12,9 +12,25 @@
 
 #include "corewar.h"
 
-void	for_visualization_purpose(t_lst *carry, t_vm *vm, int i, int n)
+void	set_the_carrys_color(t_lst *carry, t_vm *vm)
 {
-	vm->map[carry->pc - 1].live_id = (vm->bot[i - 1].alive == 1 ? -n : vm->map[carry->pc - 1].live_id);
+	vm->map[carry->pc - 1].live_id = carry->id;
+	if (vm->cycle >= vm->cycle_to_start)
+	{
+		vm->map[carry->pc - 1].bold = 49;
+		vm->map[carry->pc - 1].bold = 49;
+	}
+	else if (vm->cycle >= vm->cycle_to_start - 49)
+	{
+		vm->map[carry->pc - 1].bold = vm->cycle - vm->cycle_to_start + 50;
+		vm->map[carry->pc - 1].live = vm->cycle - vm->cycle_to_start + 50;
+	}
+}
+
+void	set_the_bots_color(t_lst *carry, t_vm *vm, int i, int n)
+{
+	vm->map[carry->pc - 1].live_id =
+		(vm->bot[i - 1].alive == 1 ? -n : vm->map[carry->pc - 1].live_id);
 	if (vm->bot[i - 1].alive == 1 && vm->cycle >= vm->cycle_to_start)
 	{
 		vm->map[carry->pc - 1].bold = 49;
@@ -35,12 +51,8 @@ int		live(t_lst *carry, t_vm *vm)
 	vm->lives_in_cycle++;
 	carry->alive = 1;
 	n = get_uint(vm->map, carry->pc);
-	if (vm->bot[carry->id - 1].alive == 1 && -n > vm->number_of_bots && vm->cycle >= vm->cycle_to_start - 49)
-	{
-		vm->map[carry->pc - 1].live_id = carry->id;
-		vm->map[carry->pc - 1].bold = 49 - vm->cycle_to_start - vm->cycle;
-		vm->map[carry->pc - 1].live = 49 - vm->cycle_to_start - vm->cycle;
-	}
+	if (vm->bot[carry->id - 1].alive == 1 && -n > vm->number_of_bots)
+		set_the_carrys_color(carry, vm);
 	i = 0;
 	while (++i <= vm->number_of_bots)
 	{
@@ -48,7 +60,7 @@ int		live(t_lst *carry, t_vm *vm)
 		{
 			vm->bot[i - 1].lives_in_cycle += 1;
 			vm->bot[i - 1].last_live = vm->cycle + 1;
-			for_visualization_purpose(carry, vm, i, n);
+			set_the_bots_color(carry, vm, i, n);
 			vm->last = -n;
 			break ;
 		}

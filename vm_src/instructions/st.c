@@ -22,7 +22,10 @@ int		st(t_lst *carry, t_vm *vm)
 	r = carry->pc;
 	iterate(&carry->pc, 1);
 	if (j == REG_CODE)
-		carry->registry[vm->map[carry->pc].val - 1] = carry->registry[vm->map[r].val - 1];
+	{
+		carry->registry[vm->map[carry->pc].val - 1] =
+			carry->registry[vm->map[r].val - 1];
+	}
 	else
 	{
 		n = carry->op;
