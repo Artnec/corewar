@@ -49,6 +49,7 @@ void		read_cor_files(t_vm *vm)
 			exit_error("excess data at the end of the file\n");
 		if (close(fd) == -1)
 			exit_error("while closing file descriptor\n");
+		vm->bot[i].alive = 1;
 	}
 }
 

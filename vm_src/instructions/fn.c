@@ -58,23 +58,33 @@ int				get_rdi_val(t_lst *carry, int t_rdi, int d, t_vm *vm)
 	return (0);
 }
 
-void			uint_to_map(unsigned int n, int id, t_map *map, int i)
+void			uint_to_map(unsigned int n, int id, t_vm *vm, int i)
 {
 	i %= MEM_SIZE;  // is needed ?
 	if (i < 0)
 		i += MEM_SIZE;  // is needed ?
-	map[i].val = (n & 0xff000000) >> 24;
-	map[i].id = id;
-	map[i].bold = 49;
-	map[(i + 1) % MEM_SIZE].val = (n & 0x00ff0000) >> 16;
-	map[(i + 1) % MEM_SIZE].id = id;
-	map[(i + 1) % MEM_SIZE].bold = 49;
-	map[(i + 2) % MEM_SIZE].val = (n & 0x0000ff00) >> 8;
-	map[(i + 2) % MEM_SIZE].id = id;
-	map[(i + 2) % MEM_SIZE].bold = 49;
-	map[(i + 3) % MEM_SIZE].val = (n & 0x000000ff);
-	map[(i + 3) % MEM_SIZE].id = id;
-	map[(i + 3) % MEM_SIZE].bold = 49;
+	vm->map[i].val = (n & 0xff000000) >> 24;
+	vm->map[i].id = id;
+	vm->map[(i + 1) % MEM_SIZE].val = (n & 0x00ff0000) >> 16;
+	vm->map[(i + 1) % MEM_SIZE].id = id;
+	vm->map[(i + 2) % MEM_SIZE].val = (n & 0x0000ff00) >> 8;
+	vm->map[(i + 2) % MEM_SIZE].id = id;
+	vm->map[(i + 3) % MEM_SIZE].val = (n & 0x000000ff);
+	vm->map[(i + 3) % MEM_SIZE].id = id;
+	if (vm->cycle >= vm->cycle_to_start)
+	{
+		vm->map[i].bold = 49;
+		vm->map[(i + 1) % MEM_SIZE].bold = 49;
+		vm->map[(i + 2) % MEM_SIZE].bold = 49;
+		vm->map[(i + 3) % MEM_SIZE].bold = 49;	
+	}
+	else if (vm->cycle >= vm->cycle_to_start - 49)
+	{
+		vm->map[i].bold = vm->cycle - vm->cycle_to_start + 50;
+		vm->map[(i + 1) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;
+		vm->map[(i + 2) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;
+		vm->map[(i + 3) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;		
+	}
 }
 
 void	fork_carry(t_lst *orig_carry, t_vm *vm, int pos)

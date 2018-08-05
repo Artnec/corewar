@@ -27,7 +27,7 @@ int		st(t_lst *carry, t_vm *vm)
 	{
 		n = carry->op;
 		iterate(&n, get_short(vm->map, carry->pc) % IDX_MOD);
-		uint_to_map(carry->registry[vm->map[r].val - 1], carry->id, vm->map, n);
+		uint_to_map(carry->registry[vm->map[r].val - 1], carry->id, vm, n);
 	}
 	iterate(&carry->pc, j == REG_CODE ? 1 : 2);
 	return (0);

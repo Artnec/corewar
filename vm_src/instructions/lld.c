@@ -17,16 +17,18 @@ int		lld(t_lst *carry, t_vm *vm)
 	int n;
 	int t;
 
-	if ((carry->codage & 0x3c) == 0x24)
+	if ((carry->codage & 0x3c) == 0x34)
 	{
+		// if (vm->cycle == 4725)
+		// 	ft_printf("HERE\n");
 		n = carry->op;
-		iterate(&n, get_short(vm->map, carry->pc) % MEM_SIZE);
+		iterate(&n, (short)get_short(vm->map, carry->pc) % MEM_SIZE);
 		t = get_uint(vm->map, n);
 		t = t > 0x7fffffff ? (t >> 16) | 0xffff0000 : t >> 16;
 		iterate(&carry->pc, 2);
 		carry->registry[vm->map[carry->pc].val - 1] = t;
 	}
-	else if ((carry->codage & 0x3c) == 0x34)
+	else if ((carry->codage & 0x3c) == 0x24)
 	{
 		n = get_uint(vm->map, carry->pc);
 		iterate(&carry->pc, 4);

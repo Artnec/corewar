@@ -24,6 +24,6 @@ int		sti(t_lst *carry, t_vm *vm)
 	n = ((int)(get_rdi_val(carry, j >> 2, 2, vm) + get_rdi_val(carry, j & 3, 2, vm)) % IDX_MOD);
 	j = carry->op;
 	iterate(&j, n);
-	uint_to_map(carry->registry[vm->map[r].val - 1], carry->id, vm->map, j);
+	uint_to_map(carry->registry[vm->map[r].val - 1], carry->id, vm, j);
 	return (0);
 }

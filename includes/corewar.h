@@ -55,6 +55,7 @@ typedef struct		s_bot
 	long			size;
 	int				lives_in_cycle;
 	int				last_live;
+	int				alive;
 }					t_bot;
 
 typedef struct		s_vm
@@ -117,7 +118,7 @@ void				key_control(t_vm *vm);
 
 unsigned int		get_uint(t_map *map, int n);
 short				get_short(t_map *map, int n);
-void				uint_to_map(unsigned int n, int id, t_map *map, int i);
+void				uint_to_map(unsigned int n, int id, t_vm *vm, int i);
 int					get_rdi_val(t_lst *carry, int t_rdi, int d, t_vm *vm);
 int					iterate(int *pc, int n);
 void				fork_carry(t_lst *orig_carry, t_vm *vm, int pos);
