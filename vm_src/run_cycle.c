@@ -76,7 +76,10 @@ static void		check_processes(t_vm *vm)
 		vm->checks_count = 0;
 	}
 	else if (vm->lives_in_cycle >= NBR_LIVE)
+	{
 		vm->cycle_to_die -= CYCLE_DELTA;
+		vm->checks_count = 0;
+	}
 	vm->lives_in_cycle = 0;
 	i = 0;
 	while (i < vm->number_of_bots)
