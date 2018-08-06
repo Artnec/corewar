@@ -40,7 +40,7 @@ static void		delete_dead_processes(t_lst *carry, t_lst *prev_carry, t_vm *vm)
 	}
 }
 
-void			change_cycle_to_die(t_vm *vm)
+static void		change_cycle_to_die(t_vm *vm)
 {
 	if (vm->checks_count == MAX_CHECKS)
 	{

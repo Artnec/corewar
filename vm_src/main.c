@@ -12,19 +12,7 @@
 
 #include "corewar.h"
 
-void	exit_error(char *error_message)
-{
-	int i;
-
-	i = 0;
-	while (error_message[i])
-		i++;
-	write(2, "Error: ", 7);
-	write(2, error_message, i);
-	exit(1);
-}
-
-void	mem_zero(void *mem, int size)
+static void		mem_zero(void *mem, int size)
 {
 	int		i;
 	char	*c;
@@ -35,49 +23,7 @@ void	mem_zero(void *mem, int size)
 		c[i++] = 0;
 }
 
-void	show_usage(void)
-{
-	write(1, "Usage:\n       ./corewar bot1.cor bot2.cor ", 43);
-	write(1, "[max MAX_PLAYERS bots]\n", 23);
-	write(1, "       to see visualization add ", 32);
-	write(1, "[-v (cycle_num)] as first argument\n", 35);
-	write(1, "       to see state of the memory after specific cycle add ", 59);
-	write(1, "[-dump cycle_num] as first argument\n", 36);
-	write(1, "       you can change order of players by adding ", 49);
-	write(1, "[-n number] before bot name\n", 28);
-}
-
-void	player_introduction(t_vm *vm)
-{
-	int i;
-
-	ft_printf("Introducing contestants...\n");
-	i = 0;
-	while (i < vm->number_of_bots)
-	{
-		ft_printf("* Player %d, weighing %ld bytes, \"%s\" (\"%s\") !\n", i + 1,
-			vm->bot[i].size, vm->bot[i].name, vm->bot[i].comment);
-		i++;
-	}
-}
-
-void	dump_memory(t_vm *vm)
-{
-	int i;
-
-	i = 0;
-	while (i < MEM_SIZE)
-	{
-		if (i % 64 == 0)
-			ft_printf("0x%02x%02x : ", i >> 8, i & 0xff);
-		ft_printf("%02x ", vm->map[i].val);
-		if ((i + 1) % 64 == 0)
-			write(1, "\n", 1);
-		i++;
-	}
-}
-
-t_lst	*add_list_head(t_lst *list_head)
+static t_lst	*add_list_head(t_lst *list_head)
 {
 	t_lst	*list;
 
@@ -86,7 +32,7 @@ t_lst	*add_list_head(t_lst *list_head)
 	return (list);
 }
 
-void	initiate_carrys_and_map(t_vm *vm, int i, int n)
+static void		initiate_carrys_and_map(t_vm *vm, int i, int n)
 {
 	while (++i < vm->number_of_bots)
 	{
@@ -112,69 +58,7 @@ void	initiate_carrys_and_map(t_vm *vm, int i, int n)
 	vm->processes = vm->number_of_bots;
 }
 
-void	finish_him(t_vm *vm)
-{
-	if (vm->v == 1 && vm->cycle <= vm->cycle_to_start)
-	{
-		start_ncurses();
-		draw_ncurses(vm);
-		pause_ncurses(vm);
-		end_ncurses(vm);
-	}
-	else
-		ft_printf("Contestant %d, \"%s\", has won !\n",
-			vm->last, vm->bot[vm->last - 1].name);
-}
-
-void	play_with_visualizator(t_vm *vm, clock_t *t1, clock_t *t2)
-{
-	key_control(vm);
-	if ((int)(*t1 * vm->fps / CLOCKS_PER_SEC) <
-		(int)(*t2 * vm->fps / CLOCKS_PER_SEC) || vm->s == 1)
-	{
-		*t1 = clock();
-		run_cycle(vm);
-		if (vm->processes == 0)
-		{
-			while ((int)(*t1 * vm->fps / CLOCKS_PER_SEC) >=
-				(int)(*t2 * vm->fps / CLOCKS_PER_SEC))
-			{
-				key_control(vm);
-				*t2 = clock();
-			}
-			draw_ncurses(vm);
-			end_ncurses(vm);
-			return ;
-		}
-	}
-	*t2 = clock();
-}
-
-void	corewar(t_vm *vm)
-{
-	clock_t		t1;
-	clock_t		t2;
-
-	t1 = clock();
-	t2 = clock() * CLOCKS_PER_SEC;
-	while (vm->processes > 0)
-	{
-		if (vm->cycle == vm->cycle_to_start && vm->v == 1)
-			start_ncurses();
-		if (vm->dump == vm->cycle)
-		{
-			dump_memory(vm);
-			return ;
-		}
-		if (vm->cycle >= vm->cycle_to_start && vm->v == 1)
-			play_with_visualizator(vm, &t1, &t2);
-		else
-			run_cycle(vm);
-	}
-	finish_him(vm);
-}
-
-void	initiate_structure(t_vm *vm)
+static void		initiate_structure(t_vm *vm)
 {
 	mem_zero(vm, sizeof(*vm));
 	vm->functions[0] = live;
@@ -198,7 +82,7 @@ void	initiate_structure(t_vm *vm)
 	vm->fps = 50;
 }
 
-int		main(int argc, char **argv)
+int				main(int argc, char **argv)
 {
 	t_vm	vm;
 

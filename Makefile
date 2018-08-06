@@ -15,12 +15,15 @@ ASM				=	asm
 CMP				=	cmp
 
 VM_SRC			=	main.c		change_bot_order.c	parse_arguments.c \
-					visualization.c		read_cor_files.c	op.c \
-					check_codage_and_regs.c	run_cycle.c
+					read_cor_files.c	op.c run_cycle.c \
+					check_codage_and_regs.c	visualization_draw_ncurses.c \
+					visualization_key_control_and_pause.c \
+					visualization_start_and_end.c	flag_searcher.c \
+					stdout_stuff.c	corewar.c
 
 VM_INS_SRC		=	live.c	ld.c	st.c	add.c	sub.c	and.c	or.c \
 					xor.c	zjmp.c	ldi.c	sti.c	fork.c	lld.c	lldi.c \
-					lfork.c	aff.c		fn.c
+					lfork.c	aff.c		fn.c	iterate.c
 
 PRINTF_SRC		=	ft_printf.c	put_signed_num.c	put_str_char.c \
 					put_unsigned_num.c	put_wide.c	small_functions.c

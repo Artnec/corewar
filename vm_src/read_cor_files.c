@@ -12,12 +12,12 @@
 
 #include "corewar.h"
 
-static int	str_num_compare(unsigned char *s, unsigned int num)
+static int		str_num_compare(unsigned char *s, unsigned int num)
 {
 	return ((unsigned int)(s[3] | s[2] << 8 | s[1] << 16 | s[0] << 24) == num);
 }
 
-void		check_the_bot(t_vm *vm, int fd, int i)
+static void		check_the_bot(t_vm *vm, int fd, int i)
 {
 	unsigned char	a[4];
 
@@ -46,7 +46,7 @@ void		check_the_bot(t_vm *vm, int fd, int i)
 		exit_error("while closing file descriptor\n");
 }
 
-void		read_cor_files(t_vm *vm)
+void			read_cor_files(t_vm *vm)
 {
 	int				i;
 

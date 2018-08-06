@@ -101,11 +101,17 @@ extern t_op			g_op_tab[17];
 int					ft_printf(const char *fmt, ...);
 
 void				parse_arguments(int argc, char **argv, t_vm *vm, int i);
+int					str_compare(char *a, char *b);
+void				flag_searcher(t_vm *vm, char **argv, int *i);
 void				read_cor_files(t_vm *vm);
 void				change_bot_order(int *a, t_vm *vm);
 int					check_codage_and_regs(t_lst *carry, t_vm *vm);
+void				corewar(t_vm *vm);
 void				run_cycle(t_vm *vm);
 void				exit_error(char *error_message);
+void				show_usage(void);
+void				player_introduction(t_vm *vm);
+void				dump_memory(t_vm *vm);
 
 
 void				draw_ncurses(t_vm *vm);

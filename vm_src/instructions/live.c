@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-void	set_the_bots_color(t_lst *carry, t_vm *vm, int n)
+static void		set_the_bots_color(t_lst *carry, t_vm *vm, int n)
 {
 	vm->map[carry->pc - 1].live_id = -n;
 	if (vm->cycle >= vm->cycle_to_start)
@@ -27,7 +27,7 @@ void	set_the_bots_color(t_lst *carry, t_vm *vm, int n)
 	}
 }
 
-int		live(t_lst *carry, t_vm *vm)
+int				live(t_lst *carry, t_vm *vm)
 {
 	int i;
 	int n;
