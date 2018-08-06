@@ -34,7 +34,10 @@ static int		get_bot_order(char *str)
 		return (3);
 	else if (*str == '4' && *(str + 1) == '\0')
 		return (4);
-	exit_error("only numbers 1 2 3 and 4 can be used after [-n] flag\n");
+	if (*str >= '0' && *str <= '9')
+		exit_error("only numbers 1 2 3 and 4 can be used after [-n] flag\n");
+	else
+		exit_error("you need spcify position after [-n] flag\n");
 	return (0);
 }
 
@@ -104,7 +107,9 @@ void			parse_arguments(int argc, char **argv, t_vm *vm, int i)
 	while (++i < 4)
 		a[i] = 0;
 	i = 0;
-	if (str_compare(argv[1], "-v") && ++i)
+	if (str_compare(argv[1], "-a") && ++i)
+		vm->a_flag = 1;
+	else if (str_compare(argv[1], "-v") && ++i)
 	{
 		vm->v = 1;
 		i += ((vm->cycle_to_start = get_cycle_to_start(argv[2])) > 0 ? 1 : 0);

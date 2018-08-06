@@ -4,7 +4,9 @@ int			iterate(int *pc, int n)
 {
 	if (*pc + n < 0)
 	{
-		*pc = MEM_SIZE + (*pc + n) % MEM_SIZE;
+		*pc += n % MEM_SIZE;
+        if (*pc < 0)
+            *pc += MEM_SIZE;
 		return (*pc);
 	}
 	*pc = (*pc + n) % MEM_SIZE;

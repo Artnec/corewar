@@ -16,7 +16,7 @@ int		aff(t_lst *carry, t_vm *vm)
 {
 	int n;
 
-	if (vm->a == 1)
+	if (vm->a_flag == 1)
 	{
 		n = carry->registry[vm->map[carry->pc].val - 1];
 		write(1, "Aff: ", 5);

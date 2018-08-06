@@ -62,7 +62,7 @@ typedef struct		s_vm
 {
 	t_lst			*carry_list_head;
 	int				v;
-	int				a;
+	int				a_flag;
 	int				dump;
 	int				number_of_bots;
 	char			*bot_filenames[4];
