@@ -55,7 +55,7 @@ typedef struct		s_bot
 	long			size;
 	int				lives_in_cycle;
 	int				last_live;
-	int				alive;
+	// int				alive;
 }					t_bot;
 
 typedef struct		s_vm

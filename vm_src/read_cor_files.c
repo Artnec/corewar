@@ -53,9 +53,6 @@ void		read_cor_files(t_vm *vm)
 
 	i = -1;
 	while (++i < vm->number_of_bots)
-	{
 		check_the_bot(vm, i);
-		vm->bot[i].alive = 1;
-	}
 }
 

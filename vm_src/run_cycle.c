@@ -40,20 +40,6 @@ static void		delete_dead_processes(t_lst *carry, t_lst *prev_carry, t_vm *vm)
 	}
 }
 
-void			check_bot_alive(t_vm *vm)
-{
-	int		i;
-
-	i = -1;
-	while (++i < vm->number_of_bots)
-	{
-		if (vm->bot[i].last_live < vm->cycle - (int)vm->cycle_to_die)
-			vm->bot[i].alive = 0;
-		else
-			vm->bot[i].alive = 1;
-	}
-}
-
 void			change_cycle_to_die(t_vm *vm)
 {
 	if (vm->checks_count == MAX_CHECKS)
@@ -75,7 +61,6 @@ static void		check_processes(t_vm *vm)
 
 	vm->checks_count++;
 	delete_dead_processes(vm->carry_list_head, NULL, vm);
-	check_bot_alive(vm);
 	if (vm->processes == 0)
 		vm->carry_list_head = NULL;
 	carry = vm->carry_list_head;
@@ -119,8 +104,6 @@ void			run_cycle(t_vm *vm)
 		draw_ncurses(vm);
 	while (carry)
 	{
-		// if (vm->cycle == 12334 && carry->cycles == 1)
-		// 	printf("%d\n", carry->pc);
 		cycle_loop(carry, vm);
 		carry = carry->next;
 	}
