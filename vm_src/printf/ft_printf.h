@@ -39,12 +39,11 @@ int				put_wide_str(wchar_t *str, t_flags *sd);
 int				put_str_char(va_list argp, t_flags *sd);
 int				put_no_type(const char **fmt, t_flags *sd);
 int				put_signed_num(t_flags *sd, va_list argp);
-int				put_unsigned_num(t_flags sd, va_list argp);
+int				put_unsigned_num(t_flags *sd, va_list argp);
 void			initialize_structure(t_flags *sd);
 int				is_type(const char *s);
 int				ft_atoi(const char **str, va_list argp);
 int				put_space_or_zero(int width, int zero);
-int				num_len(long long num, t_flags sd);
-int				unsigned_num_len(size_t num, unsigned int base, t_flags sd);
+int				num_len(size_t num, unsigned int base, int precision);
 
 #endif

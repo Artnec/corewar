@@ -20,9 +20,8 @@
 # include <ncurses.h>
 # include <time.h>
 
-# define REG_CHECK(x)		(x < 1 || x > REG_NUMBER)
-# define IS_VALID_OPCODE(x)	(x > 0 && x < 17)
-
+# define REG_CHECK(x)			(x < 1 || x > REG_NUMBER)
+# define IS_VALID_OPCODE(x)		(x > 0 && x < 17)
 
 typedef struct		s_lst
 {
@@ -55,7 +54,6 @@ typedef struct		s_bot
 	long			size;
 	int				lives_in_cycle;
 	int				last_live;
-	// int				alive;
 }					t_bot;
 
 typedef struct		s_vm
@@ -113,14 +111,11 @@ void				show_usage(void);
 void				player_introduction(t_vm *vm);
 void				dump_memory(t_vm *vm);
 
-
 void				draw_ncurses(t_vm *vm);
 void				start_ncurses(void);
 void				end_ncurses(t_vm *vm);
 void				pause_ncurses(t_vm *vm);
-// void				draw_info(t_vm *vm);
 void				key_control(t_vm *vm);
-
 
 unsigned int		get_uint(t_map *map, int n);
 short				get_short(t_map *map, int n);
@@ -128,8 +123,6 @@ void				uint_to_map(unsigned int n, int id, t_vm *vm, int i);
 int					get_rdi_val(t_lst *carry, int t_rdi, int d, t_vm *vm);
 int					iterate(int *pc, int n);
 void				fork_carry(t_lst *orig_carry, t_vm *vm, int pos);
-
-
 
 /*
 **					vm_src/instructions

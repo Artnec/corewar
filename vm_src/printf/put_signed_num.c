@@ -58,7 +58,7 @@ static int	put_signed(long long num, t_flags *sd)
 	n = num;
 	if (num < 0)
 		n = -num;
-	l = num_len(num, *sd);
+	l = num_len(num, 10, sd->precision);
 	ret = put_num(num, n, l, *sd);
 	return (ret + l);
 }

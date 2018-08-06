@@ -108,7 +108,7 @@ static int	parse(const char **fmt, t_flags *sd, va_list argp)
 	else if (sd->type == 'u' || sd->type == 'U' || sd->type == 'x' ||
 		sd->type == 'X' || sd->type == 'o' || sd->type == 'O' ||
 		sd->type == 'p' || sd->type == 'b')
-		ret = put_unsigned_num(*sd, argp);
+		ret = put_unsigned_num(sd, argp);
 	return (ret);
 }
 

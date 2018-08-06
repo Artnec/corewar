@@ -38,7 +38,7 @@ ASM_SRC			=	main.c		op.c	get_labels_and_opcodes.c \
 CMP_SRC			=	cmp.cpp
 
 CC				=	gcc
-FLAGS			=	-Wall -Werror -Wextra
+FLAGS			=	
 NCURSES_FLAG	=	-lncurses
 VFLAGS			=	-lmlx -framework OpenGL -framework AppKit -Ofast -O3
 
