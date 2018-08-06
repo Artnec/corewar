@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fn.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rnaumenk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/08/06 18:38:36 by rnaumenk          #+#    #+#             */
+/*   Updated: 2018/08/06 18:38:39 by rnaumenk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "corewar.h"
 
-int			iterate(int *pc, int n)
+int				iterate(int *pc, int n)
 {
 	if (*pc + n < 0)
 	{
 		*pc += n % MEM_SIZE;
-        if (*pc < 0)
-            *pc += MEM_SIZE;
+		if (*pc < 0)
+			*pc += MEM_SIZE;
 		return (*pc);
 	}
 	*pc = (*pc + n) % MEM_SIZE;
@@ -17,6 +29,8 @@ unsigned int	get_uint(t_map *map, int n)
 {
 	if (n + 3 >= MEM_SIZE)
 	{
+		if (n == 4339)
+			ft_printf("%d\n", n);
 		return (map[n].val << 24 | map[(n + 1) % MEM_SIZE].val << 16 |
 			map[(n + 2) % MEM_SIZE].val << 8 | map[(n + 3) % MEM_SIZE].val);
 	}
@@ -48,8 +62,9 @@ int				get_rdi_val(t_lst *carry, int t_rdi, int d, t_vm *vm)
 	}
 	if (t_rdi == IND_CODE)
 	{
-		num = get_uint(vm->map, carry->op +
-			get_short(vm->map, carry->pc) % IDX_MOD);
+		num = carry->op;
+		iterate(&num, get_short(vm->map, carry->pc) % IDX_MOD);
+		num = get_uint(vm->map, num);
 		iterate(&carry->pc, 2);
 		return (num);
 	}
@@ -74,18 +89,18 @@ void			uint_to_map(unsigned int n, int id, t_vm *vm, int i)
 		vm->map[i].bold = 49;
 		vm->map[(i + 1) % MEM_SIZE].bold = 49;
 		vm->map[(i + 2) % MEM_SIZE].bold = 49;
-		vm->map[(i + 3) % MEM_SIZE].bold = 49;	
+		vm->map[(i + 3) % MEM_SIZE].bold = 49;
 	}
 	else if (vm->cycle >= vm->cycle_to_start - 49)
 	{
 		vm->map[i].bold = vm->cycle - vm->cycle_to_start + 50;
 		vm->map[(i + 1) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;
 		vm->map[(i + 2) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;
-		vm->map[(i + 3) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;	
+		vm->map[(i + 3) % MEM_SIZE].bold = vm->cycle - vm->cycle_to_start + 50;
 	}
 }
 
-void	fork_carry(t_lst *orig_carry, t_vm *vm, int pos)
+void			fork_carry(t_lst *orig_carry, t_vm *vm, int pos)
 {
 	t_lst	*carry;
 	int		n;

@@ -39,7 +39,8 @@ void	show_usage(void)
 {
 	write(1, "Usage:\n       ./corewar bot1.cor bot2.cor ", 43);
 	write(1, "[max MAX_PLAYERS bots]\n", 23);
-	write(1, "       to see visualization add [-v (cycle_num)] as first argument\n", 67);
+	write(1, "       to see visualization add ", 32);
+	write(1, "[-v (cycle_num)] as first argument\n", 35);
 	write(1, "       to see state of the memory after specific cycle add ", 59);
 	write(1, "[-dump cycle_num] as first argument\n", 36);
 	write(1, "       you can change order of players by adding ", 49);
@@ -133,7 +134,7 @@ void	play_with_visualizator(t_vm *vm, clock_t *t1, clock_t *t2)
 	{
 		*t1 = clock();
 		run_cycle(vm);
-		if (vm->processes == 0 )
+		if (vm->processes == 0)
 		{
 			while ((int)(*t1 * vm->fps / CLOCKS_PER_SEC) >=
 				(int)(*t2 * vm->fps / CLOCKS_PER_SEC))
@@ -209,11 +210,11 @@ int		main(int argc, char **argv)
 	}
 	parse_arguments(argc, argv, &vm, -1);
 	if (vm.number_of_bots == 0)
-    {
-        show_usage();
-        return (0);
-    }
-    if (vm.v == 1 && MEM_SIZE > 4096)
+	{
+		show_usage();
+		return (0);
+	}
+	if (vm.v == 1 && MEM_SIZE > 4096)
 		exit_error("map is too big to be displayed\n");
 	read_cor_files(&vm);
 	if (vm.v != 1)

@@ -17,9 +17,8 @@ static int	str_num_compare(unsigned char *s, unsigned int num)
 	return ((unsigned int)(s[3] | s[2] << 8 | s[1] << 16 | s[0] << 24) == num);
 }
 
-void		check_the_bot(t_vm *vm, int i)
+void		check_the_bot(t_vm *vm, int fd, int i)
 {
-	int				fd;
 	unsigned char	a[4];
 
 	if ((fd = open(vm->bot_filenames[i], O_RDONLY)) == -1)
@@ -53,6 +52,5 @@ void		read_cor_files(t_vm *vm)
 
 	i = -1;
 	while (++i < vm->number_of_bots)
-		check_the_bot(vm, i);
+		check_the_bot(vm, -1, i);
 }
-
