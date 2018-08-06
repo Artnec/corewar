@@ -117,15 +117,15 @@ void			run_cycle(t_vm *vm)
 	carry = vm->carry_list_head;
 	if (vm->v == 1 && vm->cycle >= vm->cycle_to_start)
 		draw_ncurses(vm);
-	if ((int)vm->cycle_to_die <= 0)
-		delete_dead_processes(vm->carry_list_head, NULL, vm);
-	while (carry && (int)vm->cycle_to_die > 0)
+	while (carry)
 	{
 		// if (vm->cycle == 12334 && carry->cycles == 1)
 		// 	printf("%d\n", carry->pc);
 		cycle_loop(carry, vm);
 		carry = carry->next;
 	}
+	if ((int)vm->cycle_to_die <= 0)
+		delete_dead_processes(vm->carry_list_head, NULL, vm);
 	vm->cycle_alive += 1;
 	if (vm->cycle != 0 && vm->cycle_alive == vm->cycle_to_die)
 		check_processes(vm);
