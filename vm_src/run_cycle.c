@@ -121,6 +121,8 @@ void			run_cycle(t_vm *vm)
 		delete_dead_processes(vm->carry_list_head, NULL, vm);
 	while (carry && (int)vm->cycle_to_die > 0)
 	{
+		// if (vm->cycle == 12334 && carry->cycles == 1)
+		// 	printf("%d\n", carry->pc);
 		cycle_loop(carry, vm);
 		carry = carry->next;
 	}

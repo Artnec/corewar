@@ -58,6 +58,12 @@ void			pause_ncurses(t_vm *vm)
 			vm->s = 1;
 			break ;
 		}
+		else if (k == 27)
+		{
+			vm->v = 0;
+			endwin();
+			break ;
+		}
 		else if (k == 32)
 			break ;
 		mvwprintw(stdscr, 4, 221, "%d      ", vm->fps);

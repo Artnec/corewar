@@ -38,8 +38,8 @@ void	mem_zero(void *mem, int size)
 void	show_usage(void)
 {
 	write(1, "Usage:\n       ./corewar bot1.cor bot2.cor ", 43);
-	write(1, "[min 1 and max 4 bots]\n", 23);
-	write(1, "       to see visualization add [-v] as first argument\n", 55);
+	write(1, "[max MAX_PLAYERS bots]\n", 23);
+	write(1, "       to see visualization add [-v (cycle_num)] as first argument\n", 67);
 	write(1, "       to see state of the memory after specific cycle add ", 59);
 	write(1, "[-dump cycle_num] as first argument\n", 36);
 	write(1, "       you can change order of players by adding ", 49);

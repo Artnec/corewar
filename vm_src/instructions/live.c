@@ -51,16 +51,27 @@ int		live(t_lst *carry, t_vm *vm)
 	vm->lives_in_cycle++;
 	carry->alive = 1;
 	n = get_uint(vm->map, carry->pc);
+	// if (vm->cycle == 12304)
+	// 	printf("%d(%d) - %d\n", carry->pc, carry->id, -n);
 	if (vm->bot[carry->id - 1].alive == 1 && -n > vm->number_of_bots)
 		set_the_carrys_color(carry, vm);
 	i = 0;
 	while (++i <= vm->number_of_bots)
+	// i = vm->number_of_bots + 1;
+	// while (--i)
 	{
 		if (n == -i)
 		{
 			vm->bot[i - 1].lives_in_cycle += 1;
 			vm->bot[i - 1].last_live = vm->cycle + 1;
 			set_the_bots_color(carry, vm, i, n);
+			// if (vm->cycle == 25901)
+			// 	printf("%d\n", carry->id);
+			// for (int k = 1; k <= vm->number_of_bots; k++)
+			// {
+			// 	if (vm->bot[k - 1].last_live == vm->bot[i - 1].last_live)
+			// 		break ;
+			// }
 			vm->last = -n;
 			break ;
 		}
