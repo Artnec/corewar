@@ -78,4 +78,5 @@ void			parse_arguments(int argc, char **argv, t_vm *vm, int i)
 		vm->bot_filenames[vm->number_of_bots++] = get_bot_name(argv[i]);
 	}
 	change_bot_order(a, vm);
+	vm->last = vm->number_of_bots;
 }

@@ -103,8 +103,9 @@ int				main(int argc, char **argv)
 	read_cor_files(&vm);
 	if (vm.v != 1)
 		player_introduction(&vm);
-	vm.last = vm.number_of_bots;
 	initiate_carrys_and_map(&vm, -1, 0);
+	sound_stuff(&vm, 0);
 	corewar(&vm);
+	sound_stuff(&vm, 1);
 	return (0);
 }

@@ -116,6 +116,7 @@ void				start_ncurses(void);
 void				end_ncurses(t_vm *vm);
 void				pause_ncurses(t_vm *vm);
 void				key_control(t_vm *vm);
+void				sound_stuff(t_vm *vm, int i);
 
 unsigned int		get_uint(t_map *map, int n);
 short				get_short(t_map *map, int n);

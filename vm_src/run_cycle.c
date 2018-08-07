@@ -18,6 +18,7 @@ static void		delete_dead_processes(t_lst *carry, t_lst *prev_carry, t_vm *vm)
 	{
 		if (carry->alive == 0 || (int)vm->cycle_to_die <= 0)
 		{
+			sound_stuff(vm, 2);
 			if (prev_carry == NULL)
 			{
 				vm->carry_list_head = vm->carry_list_head->next;

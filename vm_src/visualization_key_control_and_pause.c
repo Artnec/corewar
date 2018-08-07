@@ -29,7 +29,7 @@ static int		getch_checker(t_vm *vm, int k)
 	}
 	else if (k == 27)
 	{
-		vm->v = 0;
+		vm->v = -1;
 		endwin();
 		return (1);
 	}
@@ -75,7 +75,7 @@ void			key_control(t_vm *vm)
 		vm->fps = (vm->fps < 990 ? vm->fps + 10 : 1000);
 	else if (k == 27)
 	{
-		vm->v = 0;
+		vm->v = -1;
 		endwin();
 	}
 	else if (k == 32)

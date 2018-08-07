@@ -19,7 +19,7 @@ VM_SRC			=	main.c		change_bot_order.c	parse_arguments.c \
 					check_codage_and_regs.c	visualization_draw_ncurses.c \
 					visualization_key_control_and_pause.c \
 					visualization_start_and_end.c	flag_searcher.c \
-					stdout_stuff.c	corewar.c
+					stdout_stuff.c	corewar.c	sound_stuff.c
 
 VM_INS_SRC		=	live.c	ld.c	st.c	add.c	sub.c	and.c	or.c \
 					xor.c	zjmp.c	ldi.c	sti.c	fork.c	lld.c	lldi.c \
