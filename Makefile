@@ -38,9 +38,8 @@ ASM_SRC			=	main.c		op.c	get_labels_and_opcodes.c \
 CMP_SRC			=	cmp.cpp
 
 CC				=	gcc
-FLAGS			=	
+FLAGS			=	-Wall -Werror -Wextra -Wshadow
 NCURSES_FLAG	=	-lncurses
-VFLAGS			=	-lmlx -framework OpenGL -framework AppKit -Ofast -O3
 
 VM_OBJ			=	$(addprefix $(VM_OBJ_DIR), $(VM_SRC:.c=.o))
 VM_INS_OBJ		=	$(addprefix $(VM_OBJ_DIR), $(VM_INS_SRC:.c=.o))
@@ -63,7 +62,7 @@ NC				=	\033[0m
 BLUE			=	\033[3;36m
 RED				=	\033[3;31m
 
-all: $(VM) $(ASM)
+all: $(VM) $(ASM) $(CMP)
 
 $(VM_OBJ_DIR)%.o: $(VM_SRC_DIR)%.c $(INC_FILES)
 	@mkdir -p $(VM_OBJ_DIR)
